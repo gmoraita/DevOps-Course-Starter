@@ -28,6 +28,7 @@ def delete(id):
 
 @app.template_filter('strftime')
 def _jinja2_filter_datetime(date, fmt=None):
+    ''' Used for the conversion of dates from the API '''
     date = parser.parse(date)
     native = date.replace(tzinfo=None)
     format='%d %b %Y'

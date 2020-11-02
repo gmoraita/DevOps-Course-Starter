@@ -4,8 +4,11 @@ from .boardelements import *
 import os
 import requests
 
+_TRELLO = 'trello'
+
 def todo_api_factory(api_name):
-    if api_name == 'trello':
+    ''' Factory method for creating a concrete ToDoAPI. Currently only accepts 'trello' '''
+    if api_name == _TRELLO:
         return TrelloAPI()
     else:
         #TODO add more APIs in the future

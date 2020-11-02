@@ -1,10 +1,8 @@
 import json
 from flask import session
-from .todoapi import todo_api_factory
+from .todoapi import todo_api_factory, _TRELLO
 
-TODO_API = 'trello'
-
-todoapi = todo_api_factory(TODO_API)
+todoapi = todo_api_factory(_TRELLO)
 
 def get_todomapper():
     """
