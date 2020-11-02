@@ -29,7 +29,7 @@
             {% for items in items_list %}
               {% for item in items %}
                 {# Below sets the vaiable pos (for workflow position) which is used in identifying which status icon to load #}
-                {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) # }
+                {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
                 {% set statusesId_list = statuses.keys()|list%}
                 {% if statusesId_list[0] == item.status %} {%set pos=0%}
                 {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
