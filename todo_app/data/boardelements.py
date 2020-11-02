@@ -1,16 +1,16 @@
 from .todomapper import ToDoMapper
 
 class Board():
-    def __init__(self):
-        self.id = '' 
-        self.name = '' 
+    def __init__(self, board_dict: dict = {}, todomapper : ToDoMapper = ToDoMapper()):
+        self.id = board_dict.get(todomapper.board_id,'') 
+        self.name = board_dict.get(todomapper.board_id,'') 
         self.statuses = {} 
 
 class BoardStatus():
-    def __init__(self):
-        self.id = ''
-        self.name = ''
-        self.pos = ''
+    def __init__(self, status_dict: dict = {}, todomapper : ToDoMapper = ToDoMapper()):
+        self.id = status_dict.get(todomapper.boardstatus_id,'')
+        self.name = status_dict.get(todomapper.boardstatus_name,'')
+        self.pos = status_dict.get(todomapper.boardstatus_pos,'')
 
 class Item():
     def __init__(self, item_dict: dict = {}, todomapper : ToDoMapper = ToDoMapper()):

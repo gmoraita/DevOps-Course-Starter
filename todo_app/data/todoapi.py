@@ -63,7 +63,7 @@ class TrelloAPI(ToDoAPI):
 
     def get_list_of_items(self):
         items_list = []
-        items_list.append(self.build_items_list_from_dict_list(self.call_api('/1/boards/%s/cards' % self.board_id,'GET').json()))
+        items_list.append(self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board_id,'GET').json()))
         return items_list
        
     def add_item(self, item_dict):
@@ -112,7 +112,7 @@ class TrelloAPI(ToDoAPI):
 
     
 
-    def build_items_list_from_dict_list(self, item_dict_list: list):
+    def build_items_list(self, item_dict_list: list):
         """
         Builds a list of Item from a list of dict containing each item's attributes
 
@@ -129,21 +129,15 @@ class TrelloAPI(ToDoAPI):
     
 
     def board_builder(self, board_dict) -> Board:
-        board = Board()
-        board.id = board_dict.get('id', '')
-        board.name = board_dict.get('name', '')
-        board.statuses = self.boardstatuses_builder(board_dict.get('lists'))
+        board = Board(board_dict, self.todomapper)
+        board.statuses = self.boardstatuses_builder(board_dict.get(self.todomapper.board_statuses))
         return board
 
     def boardstatuses_builder(self, board_lists_dicts_list) -> dict:
         board_statuses_dict = {}
         for board_list_dict in board_lists_dicts_list:
-            boardstatus = BoardStatus()
-            boardstatus.id = board_list_dict.get('id','')
-            boardstatus.name = board_list_dict.get('name','')
-            boardstatus.pos = board_list_dict.get('pos','')
+            boardstatus = BoardStatus(board_list_dict, self.todomapper)
             board_statuses_dict[boardstatus.id] = boardstatus
-
         return board_statuses_dict
 
     def init_todomapper(self):
@@ -154,5 +148,12 @@ class TrelloAPI(ToDoAPI):
         todomapper.item_due_date = 'due'
         todomapper.item_description = 'desc'
         todomapper.item_status = 'idList'
+        todomapper.boardstatus_id = 'id'
+        todomapper.boardstatus_name = 'name'
+        todomapper.boardstatus_pos = 'pos'
+        todomapper.board_id = 'id'
+        todomapper.board_name = 'name'
+        todomapper.board_statuses = 'lists'
+        
         self.todomapper = todomapper
         

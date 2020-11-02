@@ -1,12 +1,12 @@
 class ToDoMapper():
-
+    ''' Maps API field names to the ToDo classes fields'''
     board_id = '' 
     board_name = '' 
-    board_lists = '' 
+    board_statuses = '' 
 
-    boardlist_id = ''
-    boardlist_name = ''
-    boardlist_pos = ''
+    boardstatus_id = ''
+    boardstatus_name = ''
+    boardstatus_pos = ''
 
     item_id = ''
     item_id_short = ''
