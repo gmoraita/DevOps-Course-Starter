@@ -1,93 +1,70 @@
+import json
 from flask import session
+from .todoapi import todo_api_factory
 
-_DEFAULT_ITEMS = [
-    { 'id': 1, 'status': 'Not Started', 'title': 'List saved todo items' },
-    { 'id': 2, 'status': 'Not Started', 'title': 'Allow new items to be added' }
-]
+TODO_API = 'trello'
 
+todoapi = todo_api_factory(TODO_API)
+
+def get_todomapper():
+    """
+    Fetches the ToDoMapper with all the field mappings .
+
+    Returns:
+        ToDoMapper: The ToDoMapper with all the field mappings.
+    """ 
+    return todoapi.todomapper
+
+def get_statuses():
+    """
+    Fetches all statuses .
+
+    Returns:
+        list: The list of statuses.
+    """ 
+    return todoapi.get_list_of_statuses()
 
 def get_items():
     """
-    Fetches all saved items from the session.
+    Fetches all items from the apo.
 
     Returns:
-        list: The list of saved items sorted by status and then by ID.
+        list: The list of items sorted by status and then by ID.
+    """ 
+
+    return sorted(todoapi.get_list_of_items(), key=lambda item : (item[0].status))
+
+def add_item(item_dict):
     """
-    return sorted(session.get('items', _DEFAULT_ITEMS), key=lambda item : (item['status'], item['id']), reverse=True)
-
-
-def get_item(id):
-    """
-    Fetches the saved item with the specified ID.
-
-    Args:
-        id: The ID of the item.
-
-    Returns:
-        item: The saved item, or None if no items match the specified ID.
-    """
-    items = get_items()
-    return next((item for item in items if item['id'] == int(id)), None)
-
-
-def add_item(title):
-    """
-    Adds a new item with the specified title to the session.
+    Adds a new item with the specified title to the todo list.
 
     Args:
         title: The title of the item.
 
-    Returns:
-        item: The saved item.
     """
-    items = get_items()
 
-    # Determine the next ID for the item based on max ID in the session or if not available on the last item or if empty set to 1
-    # this guarantees a new true ID is created all the time (avoiding the scenario when deleting the last ID)
-    if session.get('maxId'):
-        id = session['maxId'] +1 
-    elif items:
-        id = items[0]['id'] + 1
-    else:
-        id = 1
-        
-    session['maxId'] = id
-
-    item = { 'id': id, 'title': title, 'status': 'Not Started' }
-
-    # Add the item to the list
-    items.append(item)
-    session['items'] = items
-    
-
-    return item
+    return todoapi.add_item(item_dict)
 
 
-def save_item(item):
+def update_item(id, item_params:dict):
     """
     Updates an existing item in the session. If no existing item matches the ID of the specified item, nothing is saved.
 
     Args:
-        item: The item to save.
+        id: The id of the item to update.
+        item_params: a dictionary of the item params to update (Trello params)
     """
-    existing_items = get_items()
-    updated_items = [item if item['id'] == existing_item['id'] else existing_item for existing_item in existing_items]
 
-    session['items'] = updated_items
+    return todoapi.modify_item(id, item_params)
+    
 
-    return item
-
-def delete_item(item):
+def delete_item(id):
     """
     Deletes a specific item from the session.
 
     Args:
-        item: The item to delete.
+        id: The id of the item to delete.
 
     """
-    existing_items = get_items()
-    updated_items = [existing_item for existing_item in existing_items if item['id'] != existing_item['id']]
-
-    session['items'] = updated_items
-
-    return item
+    return todoapi.delete_item(id)
+    

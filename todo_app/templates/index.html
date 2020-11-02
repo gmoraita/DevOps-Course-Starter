@@ -5,42 +5,66 @@
   
   <div class="jumbotron">
     <h1 class="display-4">To-Do App</h1>
-    <p class="lead">George's super-duper TO-DO app.</p>
+    <p class="lead">George's super-duper TO-DO app (Powered by {{todoapi_name}}).</p>
   </div>
 
   <div class="row">
     <div class="col-md-12 table-responsive-md">
       <h2>Items</h2>
-      {% if items|length >0 %}
+      {% if items_list|length >0 %}
+      <div class="wrapper loading">
         <table class="table table-sm table-hover">
           <thead class="thead-dark"> 
             <tr>
               <th style="width: 50px;">Id</th>
               <th>Title</th>
-              <th style="width: 100px;">Status</th>
-              <th style="width: 3px;text-align: center;">Done/Revert</th>
+              <th>Description</th>
+              <th>Due</th>
+              <th style="width: 150px;">Status</th>
+              <th style="width: 150px;text-align: center;">Move To</th>
               <th style="width: 3px;text-align: center;">Delete</th>
             </tr>
           </thead>
           <tbody>
-            {% for item in items %}
+            {% for items in items_list %}
+              {% for item in items %}
+                {% set statusesId_list = statuses.keys()|list%}
+                {% if statusesId_list[0] == item.status %} {%set pos=0%}
+                {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
+                {% else %} {%set pos=1%}
+                {% endif %}
               <tr>
                 
-                <td style="width: 10px;">{{ item.id }}</td>
+                <td style="width: 10px;">{{ item.id_short }}</td>
                 <td>{{item.title}}</td>
-                <td {% if item['status'] == 'Completed' %} class="text-success" {% endif %} style="width: 100px;">{{item.status}}</td>
-                <td style="width: 3px;text-align: center;">
-                  {% if item['status'] == 'Completed' %}<img src="/static/tickicon.png" style="height: 22px;" onclick="submitReq('setstatus/{{ item.id }}/Not Started',null)">
-                  {% else %}<input type="checkbox" onclick="submitReq('setstatus/{{ item.id }}/Completed',null)"/>
-                  {% endif %}
+                <td>{{item.description}}</td>
+                <td>
+                  {%if item.due_date != None%}{{ item.due_date|strftime }}
+                  {% else %}{% endif %}
+                </td>
+                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{statuses[item.status].name}}</td>
+                
+                <td style="width: 150px;text-align: center;">
+                  <select style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
+                    <option ></option>
+                    {% for status_id, status in statuses.items() %}
+                      {% if item.status != status_id %}
+                        <option value="{{status_id}}">{{status.name}}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                  
                 </td>
                 <td style="width: 3px;text-align: center;"><img src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
                 
                 
               </tr>
+              {% endfor %}
             {% endfor %}
+
           </tbody>
         </table>
+      </div>
       {% else %}No tasks to dislay
       {% endif %}
       
@@ -49,12 +73,22 @@
 
       <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
         <div class="input-group mb-3">
-          <input type="text" required  class="form-control" name="title" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="submit">Add Task</button>
+          <input type="text" required  class="form-control" name="{{todomapper.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
+        </div>
+        <div class="input-group mb-3">
+          <textarea class="form-control" name="{{todomapper.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
+        </div>
+        <div class="form-group">
+          <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
+            <input class="form-control" name="{{todomapper.item_due_date}}" type="text" placeholder="New Task Due Date" />
+            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
           </div>
         </div>
-        
+        <BR/>
+        <div class="input-group mb-3">
+          <button class="btn btn-outline-secondary" type="submit">Add Task</button>
+        </div>
+      
       </form>
           
       </div>
