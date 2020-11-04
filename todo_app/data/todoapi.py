@@ -65,9 +65,7 @@ class TrelloAPI(ToDoAPI):
         return self.statuses
 
     def get_list_of_items(self):
-        items_list = []
-        items_list.append(self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board_id,'GET').json()))
-        return items_list
+        return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board_id,'GET').json())
        
     def add_item(self, item_dict):
         return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.statuses.values())[0].id}, **item_dict}).json()
@@ -88,7 +86,7 @@ class TrelloAPI(ToDoAPI):
         url = self.TRELLO_ROOT_URL + api
         headers = {"Accept": "application/json"}
         query = {**self.auth_query, **params}
-        print ('url:%s headers:%s query:%s' % (url, headers, query))
+        
         response = requests.request(
             method,
             url,
@@ -115,7 +113,7 @@ class TrelloAPI(ToDoAPI):
 
     
 
-    def build_items_list(self, item_dict_list: list):
+    def build_items_list(self, item_dict_list: list) -> list :
         """
         Builds a list of Item from a list of dict containing each item's attributes
 

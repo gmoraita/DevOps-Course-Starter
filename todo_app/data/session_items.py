@@ -30,8 +30,7 @@ def get_items():
     Returns:
         list: The list of items sorted by status and then by ID.
     """ 
-
-    return sorted(todoapi.get_list_of_items(), key=lambda item : (item[0].status))
+    return sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id))
 
 def add_item(item_dict):
     """

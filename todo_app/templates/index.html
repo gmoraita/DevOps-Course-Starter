@@ -26,15 +26,15 @@
             </tr>
           </thead>
           <tbody>
-            {% for items in items_list %}
-              {% for item in items %}
-                {# Below sets the vaiable pos (for workflow position) which is used in identifying which status icon to load #}
-                {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
-                {% set statusesId_list = statuses.keys()|list%}
-                {% if statusesId_list[0] == item.status %} {%set pos=0%}
-                {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
-                {% else %} {%set pos=1%}
-                {% endif %}
+            {% for item in items_list %}
+              
+              {# Below sets the vaiable pos (for workflow position) which is used in identifying which status icon to load #}
+              {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
+              {% set statusesId_list = statuses.keys()|list%}
+              {% if statusesId_list[0] == item.status %} {%set pos=0%}
+              {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
+              {% else %} {%set pos=1%}
+              {% endif %}
               <tr>
                 
                 <td style="width: 10px;">{{ item.id_short }}</td>
@@ -61,7 +61,7 @@
                 
                 
               </tr>
-              {% endfor %}
+              
             {% endfor %}
 
           </tbody>
@@ -74,22 +74,25 @@
       
 
       <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
-        <div class="input-group mb-3">
-          <input type="text" required  class="form-control" name="{{todomapper.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
+        <div class="form-row">
+          <div class="form-group col-md-8">
+            <input type="text" required  class="form-control" name="{{todomapper.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
+          </div>
+          <div class="form-group col-md-4">
+            <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
+              <input class="form-control" name="{{todomapper.item_due_date}}" type="text" placeholder="New Task Due Date" />
+              <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+            </div>
+          </div>
+          
         </div>
+        
         <div class="input-group mb-3">
           <textarea class="form-control" name="{{todomapper.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
         </div>
-        <div class="form-group">
-          <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
-            <input class="form-control" name="{{todomapper.item_due_date}}" type="text" placeholder="New Task Due Date" />
-            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-          </div>
-        </div>
-        <BR/>
-        <div class="input-group mb-3">
-          <button class="btn btn-outline-secondary" type="submit">Add Task</button>
-        </div>
+        
+        <button class="btn btn-primary" type="submit">Add Task</button>
+        
       
       </form>
           
