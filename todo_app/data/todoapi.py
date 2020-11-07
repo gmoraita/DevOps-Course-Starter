@@ -4,71 +4,22 @@ from .boardelements import *
 import os
 import requests
 
-_TRELLO = 'trello'
-
-def todo_api_factory(api_name):
-    ''' Factory method for creating a concrete ToDoAPI. Currently only accepts 'trello' '''
-    if api_name == _TRELLO:
-        return TrelloAPI()
-    else:
-        #TODO add more APIs in the future
-        return None
-
-
-class ToDoAPI(ABC):
-
-    @abstractmethod
-    def get_list_of_statuses(self):
-        pass
-
-    @abstractmethod
-    def get_list_of_items(self):
-        pass
-
-    @abstractmethod
-    def add_item(self, title):
-        pass
-    
-    @abstractmethod
-    def delete_item(self, id):
-        pass
-
-    @abstractmethod
-    def modify_item(self, id, attributes):
-        pass
-
-    @property
-    def todomapper(self) -> ToDoMapper:
-        return self._todomapper
-
-    @todomapper.setter
-    def todomapper(self, mapper: ToDoMapper):
-        self._todomapper = mapper
-
-class TrelloAPI(ToDoAPI):
+class TrelloAPI():
     TRELLO_ROOT_URL = 'https://api.trello.com'
-    CREDS_CONFIG_FILE = 'creds.config'
+    CREDS_CONFIG_FILE = 'trello.config'
    
     def __init__(self):
+        #keep these calls in this sequence
         self.init_todomapper()    
-
-        #keep this call at the top as needed to get authorisation details for all subsequent calls
         self.auth_query = self.get_trello_creds_section('trello_auth')
         self.user = self.get_trello_creds_section('trello_user').get('user')
-
-        self.boards = self.get_boards_of_user(self.user) 
-        #Currently defaulting to the first board - in future we can have dropdown
-        self.board_id = self.boards[0].id 
-        self.statuses = self.boards[0].statuses
-
-    def get_list_of_statuses(self):
-        return self.statuses
+        self.board = self.load_board(self.get_trello_creds_section('trello_board').get('name')) 
 
     def get_list_of_items(self):
-        return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board_id,'GET').json())
+        return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board.id,'GET').json())
        
     def add_item(self, item_dict):
-        return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.statuses.values())[0].id}, **item_dict}).json()
+        return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.board.statuses.values())[0].id}, **item_dict}).json()
  
     def delete_item(self, id):
         return self.call_api('/1/cards/'+id, 'DELETE').json()
@@ -76,7 +27,16 @@ class TrelloAPI(ToDoAPI):
     def modify_item(self, id, atributes):
         return self.call_api('/1/cards/'+id, 'PUT', atributes).json()
 
+    def load_board(self, board_name) -> Board:
+        board = Board()
+        boards = self.call_api('/1/members/%s/boards' % self.user, 'GET', {'lists':'all'}).json()
 
+        for board_dict in boards:
+            board = self.board_builder(board_dict)
+            if board.name == board_name:
+                break
+        
+        return board
 
     def call_api(self, api, method, params = {}) -> requests.Response:
         """
@@ -102,26 +62,7 @@ class TrelloAPI(ToDoAPI):
         creds_config.read(os.path.join(os.path.dirname(__file__), '', self.CREDS_CONFIG_FILE))
         return creds_config._sections[section]
 
-
-    def get_boards_of_user(self, user) -> list:
-        boards_list = []
-        boards = self.call_api('/1/members/%s/boards' % user, 'GET', {'lists':'all'}).json()
-
-        for board in boards:
-            boards_list.append(self.board_builder(board))
-        return boards_list
-
-    
-
     def build_items_list(self, item_dict_list: list) -> list :
-        """
-        Builds a list of Item from a list of dict containing each item's attributes
-
-        Args:
-            status: The status under which the items are
-            item_dict_list: list of dict containing each item's attributes
-
-        """
         items_list =[]
         for item_dict in item_dict_list:
             items_list.append(Item( item_dict, self.todomapper))

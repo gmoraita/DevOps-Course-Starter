@@ -3,7 +3,7 @@ from .todomapper import ToDoMapper
 class Board():
     def __init__(self, board_dict: dict = {}, todomapper : ToDoMapper = ToDoMapper()):
         self.id = board_dict.get(todomapper.board_id,'') 
-        self.name = board_dict.get(todomapper.board_id,'') 
+        self.name = board_dict.get(todomapper.board_name,'') 
         self.statuses = {} 
 
 class BoardStatus():

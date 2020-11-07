@@ -1,11 +1,18 @@
 from flask import Flask, render_template, request
-from .data.session_items import add_item, update_item, delete_item, get_items, get_statuses, get_todomapper, TODO_API
+from .data.todoapi import TrelloAPI
 from dateutil import parser
 
 app = Flask(__name__)
+todoapi = TrelloAPI()
 
 def render_index_response():
-    return render_template('index.html', items_list = get_items(), statuses = get_statuses(), todomapper = get_todomapper(), todoapi_name= TODO_API)
+    return render_template('index.html', 
+        items_list = sorted(todoapi.get_list_of_items(), 
+        key=lambda item : (item.status, item.id)), 
+        statuses = todoapi.board.statuses, 
+        todomapper = todoapi.todomapper, 
+        board = todoapi.board.name
+    )
 
 @app.route('/', methods=['GET'])
 def index():
@@ -13,17 +20,17 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
-    add_item(request.form)
+    todoapi.add_item(request.form)
     return render_index_response()
 
 @app.route('/setstatus/<id>/<status>', methods=['POST'])
 def setstatus(id,status):
-    update_item(id, {'idList': status})
+    todoapi.modify_item(id, {'idList': status})
     return render_index_response()
 
 @app.route('/delete/<id>', methods=['POST'])
 def delete(id):
-    delete_item(id)
+    todoapi.delete_item(id)
     return render_index_response()
 
 @app.template_filter('strftime')
