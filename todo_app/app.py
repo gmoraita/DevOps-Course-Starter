@@ -1,12 +1,19 @@
-from flask import Flask, render_template, request
-from todo_app.flask_config import Config
-from todo_app.data.session_items import *
+from flask import Flask, render_template, request, url_for, redirect
+from .data.todoapi import TrelloAPI
+from .data.boardelements import Item
+from dateutil import parser
 
 app = Flask(__name__)
-app.config.from_object(Config)
+todoapi = TrelloAPI()
 
 def render_index_response():
-    return render_template('index.html', items = get_items())
+    return render_template('index.html', 
+        items_list = sorted(todoapi.get_list_of_items(), 
+        key=lambda item : (item.status, item.id)), 
+        statuses = todoapi.board.statuses, 
+        item = Item, 
+        board = todoapi.board.name
+    )
 
 @app.route('/', methods=['GET'])
 def index():
@@ -14,21 +21,26 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
-    add_item(request.form.get('title'))
+    todoapi.add_item(request.form)
     return render_index_response()
 
 @app.route('/setstatus/<id>/<status>', methods=['POST'])
 def setstatus(id,status):
-    item = get_item(id)
-    item['status'] = status
-    save_item(item)
+    todoapi.modify_item(id, {'idList': status})
     return render_index_response()
 
 @app.route('/delete/<id>', methods=['POST'])
 def delete(id):
-    item = get_item(id)
-    delete_item(item)
+    todoapi.delete_item(id)
     return render_index_response()
+
+@app.template_filter('strftime')
+def _jinja2_filter_datetime(date, fmt=None):
+    ''' Used for the conversion of dates from the API '''
+    date = parser.parse(date)
+    native = date.replace(tzinfo=None)
+    format='%d %b %Y'
+    return native.strftime(format) 
 
 if __name__ == '__main__':
     app.run()
