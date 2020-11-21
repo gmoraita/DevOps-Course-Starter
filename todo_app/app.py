@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for, redirect
 from .data.todoapi import TrelloAPI
+from .data.boardelements import Item
 from dateutil import parser
 
 app = Flask(__name__)
@@ -10,7 +11,7 @@ def render_index_response():
         items_list = sorted(todoapi.get_list_of_items(), 
         key=lambda item : (item.status, item.id)), 
         statuses = todoapi.board.statuses, 
-        todomapper = todoapi.todomapper, 
+        item = Item, 
         board = todoapi.board.name
     )
 

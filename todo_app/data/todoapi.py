@@ -10,7 +10,7 @@ class TrelloAPI():
    
     def __init__(self):
         #keep these calls in this sequence
-        self.init_todomapper()    
+        self.init_todomapping()    
         self.auth_query = self.get_trello_creds_section('trello_auth')
         self.user = self.get_trello_creds_section('trello_user').get('user')
         self.board = self.load_board(self.get_trello_creds_section('trello_board').get('name')) 
@@ -65,37 +65,35 @@ class TrelloAPI():
     def build_items_list(self, item_dict_list: list) -> list :
         items_list =[]
         for item_dict in item_dict_list:
-            items_list.append(Item( item_dict, self.todomapper))
+            items_list.append(Item( item_dict))
 
         return items_list
     
 
     def board_builder(self, board_dict) -> Board:
-        board = Board(board_dict, self.todomapper)
-        board.statuses = self.boardstatuses_builder(board_dict.get(self.todomapper.board_statuses))
+        board = Board(board_dict)
+        board.statuses = self.boardstatuses_builder(board_dict.get(Board.board_statuses))
         return board
 
     def boardstatuses_builder(self, board_lists_dicts_list) -> dict:
         board_statuses_dict = {}
         for board_list_dict in board_lists_dicts_list:
-            boardstatus = BoardStatus(board_list_dict, self.todomapper)
+            boardstatus = BoardStatus(board_list_dict)
             board_statuses_dict[boardstatus.id] = boardstatus
         return board_statuses_dict
 
-    def init_todomapper(self):
-        todomapper = ToDoMapper()
-        todomapper.item_id = 'id'
-        todomapper.item_id_short = 'idShort'
-        todomapper.item_title = 'name'
-        todomapper.item_due_date = 'due'
-        todomapper.item_description = 'desc'
-        todomapper.item_status = 'idList'
-        todomapper.boardstatus_id = 'id'
-        todomapper.boardstatus_name = 'name'
-        todomapper.boardstatus_pos = 'pos'
-        todomapper.board_id = 'id'
-        todomapper.board_name = 'name'
-        todomapper.board_statuses = 'lists'
-        
-        self.todomapper = todomapper
+    def init_todomapping(self):
+        Item.item_id = 'id'
+        Item.item_id_short = 'idShort'
+        Item.item_title = 'name'
+        Item.item_due_date = 'due'
+        Item.item_description = 'desc'
+        Item.item_status = 'idList'
+        BoardStatus.boardstatus_id = 'id'
+        BoardStatus.boardstatus_name = 'name'
+        BoardStatus.boardstatus_pos = 'pos'
+        Board.board_id = 'id'
+        Board.board_name = 'name'
+        Board.board_statuses = 'lists'
+
         
