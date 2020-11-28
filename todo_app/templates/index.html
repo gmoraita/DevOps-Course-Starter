@@ -6,13 +6,13 @@
   <div class="jumbotron">
     <h1 class="display-4">To-Do App</h1>
     <p class="lead">George's super-duper TO-DO app (Powered by Trello&reg;).</p>
-    <strong>Board: </strong>{{board}}
+    <strong>Board: </strong>{{view_model.board}}
   </div>
 
   <div class="row">
     <div class="col-md-12 table-responsive-md">
       <h2>Items</h2>
-      {% if items_list|length >0 %}
+      {% if view_model.items|length >0 %}
       <div class="wrapper loading">
         <table class="table table-sm table-hover">
           <thead class="thead-dark"> 
@@ -27,11 +27,12 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in items_list %}
+            {% for item in view_model.items %}
               
               {# Below sets the vaiable pos (for workflow position) which is used in identifying which status icon to load #}
               {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
-              {% set statusesId_list = statuses.keys()|list%}
+              
+              {% set statusesId_list = view_model.statuses.keys()|list%}
               {% if statusesId_list[0] == item.status %} {%set pos=0%}
               {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
               {% else %} {%set pos=1%}
@@ -45,12 +46,12 @@
                   {%if item.due_date != None%}{{ item.due_date|strftime }}
                   {% else %}{% endif %}
                 </td>
-                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{statuses[item.status].name}}</td>
+                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{view_model.statuses[item.status].name}}</td>
                 
                 <td style="width: 150px;text-align: center;">
                   <select style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
                     <option ></option>
-                    {% for status_id, status in statuses.items() %}
+                    {% for status_id, status in view_model.statuses.items() %}
                       {% if item.status != status_id %}
                         <option value="{{status_id}}">{{status.name}}</option>
                       {% endif %}
@@ -77,11 +78,11 @@
       <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
         <div class="form-row">
           <div class="form-group col-md-8">
-            <input type="text" required  class="form-control" name="{{item.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
+            <input type="text" required  class="form-control" name="{{view_model.item_params.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
           </div>
           <div class="form-group col-md-4">
             <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
-              <input class="form-control" name="{{item.item_due_date}}" type="text" placeholder="New Task Due Date" />
+              <input class="form-control" name="{{view_model.item_params.item_due_date}}" type="text" placeholder="New Task Due Date" />
               <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
             </div>
           </div>
@@ -89,7 +90,7 @@
         </div>
         
         <div class="input-group mb-3">
-          <textarea class="form-control" name="{{item.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
+          <textarea class="form-control" name="{{view_model.item_params.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
         </div>
         
         <button class="btn btn-primary" type="submit">Add Task</button>

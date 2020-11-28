@@ -2,18 +2,18 @@ from flask import Flask, render_template, request, url_for, redirect
 from .data.todoapi import TrelloAPI
 from .data.boardelements import Item
 from dateutil import parser
+from .viewmodel import ViewModel
 
 app = Flask(__name__)
 todoapi = TrelloAPI()
 
 def render_index_response():
-    return render_template('index.html', 
-        items_list = sorted(todoapi.get_list_of_items(), 
-        key=lambda item : (item.status, item.id)), 
-        statuses = todoapi.board.statuses, 
-        item = Item, 
-        board = todoapi.board.name
-    )
+    item_view_model = ViewModel(
+        sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id)), 
+        todoapi.board.statuses, 
+        Item, 
+        todoapi.board.name)
+    return render_template('index.html', view_model= item_view_model)
 
 @app.route('/', methods=['GET'])
 def index():
