@@ -18,8 +18,8 @@ class TrelloAPI():
     def get_list_of_items(self):
         return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board.id,'GET').json())
        
-    def add_item(self, item_dict):
-        return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.board.statuses.values())[0].id}, **item_dict}).json()
+    def add_item(self, item_dict, status_index = 0):
+        return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.board.statuses.values())[status_index].id}, **item_dict}).json()
  
     def delete_item(self, id):
         return self.call_api('/1/cards/'+id, 'DELETE').json()
