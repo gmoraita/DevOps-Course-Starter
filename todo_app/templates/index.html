@@ -7,7 +7,7 @@
   <div class="jumbotron">
     <h1 class="display-4">To-Do App</h1>
     <p class="lead">George's super-duper TO-DO app (Powered by Trello&reg;).</p>
-    <strong>Board: </strong>{{view_model.board}}
+    <strong>Board: </strong>{{view_model.board.name}}
   </div>
 
   <div class="row">
@@ -15,21 +15,21 @@
       <h2>Items</h2>
       <div class="wrapper loading">
         <h5>To-Do</h5>
-        {{ status_table(view_model.todo_items, view_model.statuses) }}
+        {{ status_table(view_model.todo_items, view_model.board.statuses) }}
         
         <h5>Doing</h5>
-        {{ status_table(view_model.doing_items, view_model.statuses) }}
+        {{ status_table(view_model.doing_items, view_model.board.statuses) }}
 
         {% if view_model.show_all_done_items%}
           <h5>Done</h5>
-          {{ status_table(view_model.done_items, view_model.statuses) }}
+          {{ status_table(view_model.done_items, view_model.board.statuses) }}
         {% else %}
           <h5>Done - Recent</h5>
-          {{ status_table(view_model.recent_done_items, view_model.statuses) }}
+          {{ status_table(view_model.recent_done_items, view_model.board.statuses) }}
           <details>
             <summary>Show Older Completed</summary>
             <h5>Done - Older</h5>
-            {{ status_table(view_model.older_done_items, view_model.statuses) }}
+            {{ status_table(view_model.older_done_items, view_model.board.statuses) }}
           </details>
 
         {% endif %}
