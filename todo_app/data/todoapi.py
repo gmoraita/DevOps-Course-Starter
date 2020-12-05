@@ -89,6 +89,7 @@ class TrelloAPI():
         Item.item_due_date = 'due'
         Item.item_description = 'desc'
         Item.item_status = 'idList'
+        Item.item_last_updated = 'dateLastActivity'
         BoardStatus.boardstatus_id = 'id'
         BoardStatus.boardstatus_name = 'name'
         BoardStatus.boardstatus_pos = 'pos'

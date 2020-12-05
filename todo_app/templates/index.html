@@ -15,15 +15,28 @@
       <h2>Items</h2>
       <div class="wrapper loading">
         <h5>To-Do</h5>
-        {{ status_table(view_model.todo_items(), view_model.statuses) }}
+        {{ status_table(view_model.todo_items, view_model.statuses) }}
         
         <h5>Doing</h5>
-        {{ status_table(view_model.doing_items(), view_model.statuses) }}
+        {{ status_table(view_model.doing_items, view_model.statuses) }}
 
-        <h5>Done</h5>
-        {{ status_table(view_model.done_items(), view_model.statuses) }}
+        {% if view_model.show_all_done_items%}
+          <h5>Done</h5>
+          {{ status_table(view_model.done_items, view_model.statuses) }}
+        {% else %}
+          <h5>Done - Recent</h5>
+          {{ status_table(view_model.recent_done_items, view_model.statuses) }}
+          <details>
+            <summary>Show Older Completed</summary>
+            <h5>Done - Older</h5>
+            {{ status_table(view_model.older_done_items, view_model.statuses) }}
+          </details>
+
+        {% endif %}
       </div>
+      <br/><br/>
 
+      <h5>New Task</h5>
       <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
         <div class="form-row">
           <div class="form-group col-md-8">

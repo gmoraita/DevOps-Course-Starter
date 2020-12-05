@@ -22,6 +22,7 @@ class Item():
     item_title = ''
     item_due_date = ''
     item_description = ''
+    item_last_updated = ''
     item_status = None
     def __init__(self, item_dict: dict = {}):
         self.id = item_dict.get(self.item_id, '')
@@ -30,3 +31,4 @@ class Item():
         self.due_date = item_dict.get(self.item_due_date, '')
         self.description = item_dict.get(self.item_description, '')
         self.status = item_dict.get(self.item_status, '')
+        self.last_updated = item_dict.get(self.item_last_updated, '')
