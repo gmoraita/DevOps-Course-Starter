@@ -5,7 +5,7 @@ class Board():
     def __init__(self, board_dict: dict = {}):
         self.id = board_dict.get(self.board_id,'') 
         self.name = board_dict.get(self.board_name,'') 
-        self.statuses = {} 
+        self.statuses = board_dict.get(self.board_statuses,{})  
 
 class BoardStatus():
     boardstatus_id = ''
