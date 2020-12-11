@@ -22,8 +22,6 @@ def mock_get_lists(method, url, **kwargs):
 
 @pytest.fixture
 def client():
-    # Use our test integration config instead of the 'real' version
-
     # Create the new app.
     test_app = app.create_app()
     # Use the app to create a test_client that can be used in our tests.

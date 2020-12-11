@@ -83,7 +83,6 @@ pip install -U mock
 pip install -U requests_mock
 pip install -U selenium
 pip install -U selenium-requests
-pip install -U flask_restx
 
 Troubleshooting!
 Getting the driver to work can be a bit of a pain! If it isn’t working, try these things
