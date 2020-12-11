@@ -9,13 +9,13 @@ class TrelloAPI():
     CREDS_CONFIG_FILE = 'trello.config'
    
     def __init__(self):
-        #keep these calls in this sequence
         self.init_todomapping()    
-        self.auth_query = self.get_trello_creds_section('trello_auth')
-        self.user = self.get_trello_creds_section('trello_user').get('user')
-        self.board = self.load_board(self.get_trello_creds_section('trello_board').get('name')) 
-
-    def get_list_of_items(self):
+        self.auth_query = self.get_trello_creds_section('trello_auth',TrelloAPI.CREDS_CONFIG_FILE)
+        self.user = self.get_trello_creds_section('trello_user',TrelloAPI.CREDS_CONFIG_FILE).get('user')
+        self.board_name = self.get_trello_creds_section('trello_board',TrelloAPI.CREDS_CONFIG_FILE).get('name')
+        self._board = None
+        
+    def get_list_of_items(self):  
         return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board.id,'GET').json())
        
     def add_item(self, item_dict, status_index = 0):
@@ -27,16 +27,31 @@ class TrelloAPI():
     def modify_item(self, id, atributes):
         return self.call_api('/1/cards/'+id, 'PUT', atributes).json()
 
-    def load_board(self, board_name) -> Board:
-        board = Board()
+    @property
+    def board(self):
+        if self._board == None:
+            self._board = self.load_board() 
+
+        return self._board
+
+    def load_board(self):
+        if os.environ.get('TRELLO_BOARD_ID') != None:
+            return self.load_board_by_id(os.environ.get('TRELLO_BOARD_ID'))
+        else:
+            return self.load_board_by_name(self.board_name)
+
+    def load_board_by_name(self, board_name) -> Board:
         boards = self.call_api('/1/members/%s/boards' % self.user, 'GET', {'lists':'all'}).json()
 
         for board_dict in boards:
             board = self.board_builder(board_dict)
             if board.name == board_name:
-                break
+                return board
         
-        return board
+        return None
+
+    def load_board_by_id(self, board_id) -> Board:
+        return self.board_builder(self.call_api('/1/boards/%s' % board_id, 'GET', {'lists':'all'}).json())
 
     def call_api(self, api, method, params = {}) -> requests.Response:
         """
@@ -57,9 +72,9 @@ class TrelloAPI():
         return response
 
 
-    def get_trello_creds_section(self, section) -> dict:
+    def get_trello_creds_section(self, section, config_file) -> dict:
         creds_config = ConfigParser()
-        creds_config.read(os.path.join(os.path.dirname(__file__), '', self.CREDS_CONFIG_FILE))
+        creds_config.read(os.path.join(os.path.dirname(__file__), '', config_file))
         return creds_config._sections[section]
 
     def build_items_list(self, item_dict_list: list) -> list :
