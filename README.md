@@ -70,3 +70,25 @@ You should see output similar to the following:
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
 
+## Running the Tests
+
+To run the Selenium tests, you will need to download the Gecko driver:
+https://github.com/mozilla/geckodriver/releases
+
+Place the driver at the root of the project
+
+Before running the tests, install with pip the following:
+pip install -U pytest
+pip install -U mock
+pip install -U requests_mock
+pip install -U selenium
+pip install -U selenium-requests
+pip install -U flask_restx
+
+Troubleshooting!
+Getting the driver to work can be a bit of a pain! If it isn’t working, try these things
+• you’ll need the browser (FireFox in this case) installed as well as the driver.
+• the browser and the driver will need to be the same version
+• the driver must be on the $PATH
+• on Mac, you may get a permissions error. If you do, try the steps explained here:
+https://stackoverflow.com/questions/60362018/macos-catalinav-10-15-3-errorchromedriver-cannot-be-opened-because-the-de
