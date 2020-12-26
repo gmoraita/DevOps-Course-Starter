@@ -70,3 +70,32 @@ You should see output similar to the following:
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
 
+
+## Using Vagrant
+You can create a new Hypervisor installed with your app and in running mode.
+* Download and install VirtualBox on your host https://www.virtualbox.org/wiki/Downloads
+* Download and install Vagrant: https://www.vagrantup.com/downloads 
+* Open powershell 
+* Go to the root of your TODO app
+* Run the following on your command line to create the hypervisor with the TODO app installed and running:
+```bash
+vagrant up --provision
+```
+* Once complete login to the hypervisor created (username & password: vagrant/vagrant)
+```bash
+vagrant ssh
+```
+* Then tail the gunicorn access logs:
+```bash
+cd /vagrant
+tail -f ./gunicorn-access.log
+```
+* Open a browser on your host and go to: http://localhost
+* You should see the TODO app and in the logs a new entry
+
+NOTE: if there is already a binding on port 80 in your host you can change the port on Vargantfile (replace xxxx with your desired port):
+config.vm.network "forwarded_port", guest: 5000, host: xxxx
+```
+
+
+
