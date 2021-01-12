@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, current_app
 from .data.todoapi import TrelloAPI
 from .data.boardelements import Item
 from dateutil import parser
 from .viewmodel import ViewModel
-
+from .app_config import Config
 
 def create_app():
     app = Flask(__name__)
-    todoapi = TrelloAPI()
+    app.config.from_object(Config()) 
+    
+    todoapi = TrelloAPI(app.config) 
     
     # All the routes and setup code etc
     
@@ -48,3 +50,5 @@ def create_app():
 
     return app
 
+if __name__ == '__main__':
+    create_app().run()

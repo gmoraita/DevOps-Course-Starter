@@ -36,20 +36,14 @@ The `.env` file is used by flask to set environment variables when running `flas
 In order to call the Trello API, you need to first create an account on https://trello.com/signup., then generate an API key and token by following the
 instructions here: https://trello.com/app-key.
 
-Once complete you need to copy the key a token from that page.
+Once complete you need to copy the key and token from that page.
 
-Please add a "trello.config" file in the todo_app/data folder with the following format:
-
-[trello_auth]
-key=<Trello Key>
-token=<Trello Token> 
-
-[trello_user]
-user=<The Trello user>
-
-[trello_board]
-name=<The Trello board to open>
-
+* At the root of the project make a copy of the .env_template and name it .env file
+* Fill in the variables as per below:
+TRELLO_API_KEY=<your trello key>
+TRELLO_API_SECRET=<your trello token>
+TRELLO_USER=<your trello username>
+TRELLO_BOARD_NAME=<the name of the board you want to use>
 
 ## Running the App
 
@@ -84,6 +78,13 @@ pip install -U mock
 pip install -U requests_mock
 pip install -U selenium
 pip install -U selenium-requests
+poetry add pytest selenium selenium-requests mock --dev
+```
+To run the tests:
+* go to the root of the project 
+* run the below - it will launch all tests:
+```
+poetry run pytest
 ```
 
 Troubleshooting!

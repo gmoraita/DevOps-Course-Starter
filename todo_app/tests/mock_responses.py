@@ -3,10 +3,6 @@ class MockResponses():
         pass
 
 
-    @property
-    def trello_user(self):
-        return 'bobinaki'
-
     @property 
     def board_id(self):
         return self.boards[0]['id']

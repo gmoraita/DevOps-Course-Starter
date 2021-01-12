@@ -36,7 +36,7 @@
                 <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{statuses[item.status].name}}</td>
                 
                 <td style="width: 150px;text-align: center;">
-                  <select style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
+                  <select id="status_select_{{item.id_short}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
                     <option ></option>
                     {% for status_id, status in statuses.items() %}
                       {% if item.status != status_id %}
@@ -46,7 +46,7 @@
                   </select>
                   
                 </td>
-                <td style="width: 3px;text-align: center;"><img src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
+                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id_short}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
                 
                 
               </tr>
