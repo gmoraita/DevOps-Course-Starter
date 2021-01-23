@@ -36,20 +36,14 @@ The `.env` file is used by flask to set environment variables when running `flas
 In order to call the Trello API, you need to first create an account on https://trello.com/signup., then generate an API key and token by following the
 instructions here: https://trello.com/app-key.
 
-Once complete you need to copy the key a token from that page.
+Once complete you need to copy the key and token from that page.
 
-Please add a "trello.config" file in the todo_app/data folder with the following format:
-
-[trello_auth]
-key=<Trello Key>
-token=<Trello Token> 
-
-[trello_user]
-user=<The Trello user>
-
-[trello_board]
-name=<The Trello board to open>
-
+* At the root of the project make a copy of the .env_template and name it .env file
+* Fill in the variables as per below:
+TRELLO_API_KEY=<your trello key>
+TRELLO_API_SECRET=<your trello token>
+TRELLO_USER=<your trello username>
+TRELLO_BOARD_NAME=<the name of the board you want to use>
 
 ## Running the App
 
@@ -69,6 +63,37 @@ You should see output similar to the following:
  * Debugger PIN: 226-556-590
 ```
 Now visit [`http://localhost:5000/`](http://localhost:5000/) in your web browser to view the app.
+
+## Running the Tests
+
+To run the Selenium tests, you will need to download the Gecko driver:
+https://github.com/mozilla/geckodriver/releases
+
+Place the driver at the root of the project
+
+Before running the tests, install with pip the following:
+```bash
+pip install -U pytest
+pip install -U mock
+pip install -U requests_mock
+pip install -U selenium
+pip install -U selenium-requests
+poetry add pytest selenium selenium-requests mock --dev
+```
+To run the tests:
+* go to the root of the project 
+* run the below - it will launch all tests:
+```
+poetry run pytest
+```
+
+Troubleshooting!
+Getting the driver to work can be a bit of a pain! If it isn’t working, try these things
+* you’ll need the browser (FireFox in this case) installed as well as the driver.
+* the browser and the driver will need to be the same version
+* the driver must be on the $PATH
+* on Mac, you may get a permissions error. If you do, try the steps explained here:
+https://stackoverflow.com/questions/60362018/macos-catalinav-10-15-3-errorchromedriver-cannot-be-opened-because-the-de
 
 
 ## Using Vagrant
@@ -96,6 +121,5 @@ tail -f ./gunicorn-access.log
 NOTE: if there is already a binding on port 80 in your host you can change the port on Vargantfile (replace xxxx with your desired port):
 config.vm.network "forwarded_port", guest: 5000, host: xxxx
 ```
-
 
 

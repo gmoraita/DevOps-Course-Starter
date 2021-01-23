@@ -119,6 +119,7 @@ env/
 ### Configuration files ###
 .env
 
+
 ### Vagrant ###
 .vagrant
 
@@ -127,3 +128,7 @@ poetry.lock
 
 ### gunicorn ###
 gunicorn*
+
+### Gecko related ###
+geckodriver*
+
