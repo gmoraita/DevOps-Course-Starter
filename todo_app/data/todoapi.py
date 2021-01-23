@@ -1,66 +1,53 @@
 from abc import ABC, abstractmethod
-from configparser import ConfigParser
 from .boardelements import *
-import os
+from .trelloapicaller import TrelloAPICaller
 import requests
 
 class TrelloAPI():
-    TRELLO_ROOT_URL = 'https://api.trello.com'
-    CREDS_CONFIG_FILE = 'trello.config'
    
-    def __init__(self):
-        #keep these calls in this sequence
-        self.init_todomapping()    
-        self.auth_query = self.get_trello_creds_section('trello_auth')
-        self.user = self.get_trello_creds_section('trello_user').get('user')
-        self.board = self.load_board(self.get_trello_creds_section('trello_board').get('name')) 
-
-    def get_list_of_items(self):
-        return self.build_items_list(self.call_api('/1/boards/%s/cards' % self.board.id,'GET').json())
+    def __init__(self, config):
+        self.init_todomapping() 
+        self.config = config
+        self.api = TrelloAPICaller(config)
+        self._board = None
+        
+    def get_list_of_items(self):  
+        return self.build_items_list(self.api.call_api('/boards/%s/cards' % self.board.id,'GET').json())
        
-    def add_item(self, item_dict):
-        return self.call_api('/1/cards', 'POST', {**{'idList' : list(self.board.statuses.values())[0].id}, **item_dict}).json()
+    def add_item(self, item_dict, status_index = 0):
+        return self.api.call_api('/cards', 'POST', {**{'idList' : list(self.board.statuses.values())[status_index].id}, **item_dict}).json()
  
     def delete_item(self, id):
-        return self.call_api('/1/cards/'+id, 'DELETE').json()
+        return self.api.call_api('/cards/'+id, 'DELETE').json()
  
     def modify_item(self, id, atributes):
-        return self.call_api('/1/cards/'+id, 'PUT', atributes).json()
+        return self.api.call_api('/cards/'+id, 'PUT', atributes).json()
 
-    def load_board(self, board_name) -> Board:
-        board = Board()
-        boards = self.call_api('/1/members/%s/boards' % self.user, 'GET', {'lists':'all'}).json()
+    @property
+    def board(self):
+        if self._board == None:
+            self._board = self.load_board() 
+
+        return self._board
+
+    def load_board(self):
+        if  self.config.get('TRELLO_BOARD_ID', None) != None:
+            return self.load_board_by_id(self.config['TRELLO_BOARD_ID'])    
+        else:
+            return self.load_board_by_name(self.config['TRELLO_BOARD_NAME'])
+
+    def load_board_by_name(self, board_name) -> Board:
+        boards = self.api.call_api('/members/%s/boards' % self.config['TRELLO_USER'], 'GET', {'lists':'all'}).json()
 
         for board_dict in boards:
             board = self.board_builder(board_dict)
             if board.name == board_name:
-                break
+                return board
         
-        return board
+        return None
 
-    def call_api(self, api, method, params = {}) -> requests.Response:
-        """
-        Makes a call to the Trello API using key and token
-        """
-        
-        url = self.TRELLO_ROOT_URL + api
-        headers = {"Accept": "application/json"}
-        query = {**self.auth_query, **params}
-        
-        response = requests.request(
-            method,
-            url,
-            headers=headers,
-            params=query
-        )
-
-        return response
-
-
-    def get_trello_creds_section(self, section) -> dict:
-        creds_config = ConfigParser()
-        creds_config.read(os.path.join(os.path.dirname(__file__), '', self.CREDS_CONFIG_FILE))
-        return creds_config._sections[section]
+    def load_board_by_id(self, board_id) -> Board:
+        return self.board_builder(self.api.call_api('/boards/%s' % board_id, 'GET', {'lists':'all'}).json())
 
     def build_items_list(self, item_dict_list: list) -> list :
         items_list =[]
@@ -89,6 +76,7 @@ class TrelloAPI():
         Item.item_due_date = 'due'
         Item.item_description = 'desc'
         Item.item_status = 'idList'
+        Item.item_last_updated = 'dateLastActivity'
         BoardStatus.boardstatus_id = 'id'
         BoardStatus.boardstatus_name = 'name'
         BoardStatus.boardstatus_pos = 'pos'
