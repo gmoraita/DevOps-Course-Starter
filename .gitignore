@@ -119,5 +119,13 @@ env/
 ### Configuration files ###
 .env
 
+
+### Vagrant ###
+.vagrant
+
+### gunicorn ###
+gunicorn*
+
 ### Gecko related ###
 geckodriver*
+

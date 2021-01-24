@@ -94,3 +94,32 @@ Getting the driver to work can be a bit of a pain! If it isn’t working, try th
 * the driver must be on the $PATH
 * on Mac, you may get a permissions error. If you do, try the steps explained here:
 https://stackoverflow.com/questions/60362018/macos-catalinav-10-15-3-errorchromedriver-cannot-be-opened-because-the-de
+
+
+## Using Vagrant
+You can create a new Hypervisor installed with your app and in running mode.
+* Download and install VirtualBox on your host https://www.virtualbox.org/wiki/Downloads
+* Download and install Vagrant: https://www.vagrantup.com/downloads 
+* Open a shell 
+* Go to the root of your TODO app
+* Run the following on your command line to create the virtual machine with the TODO app installed and running:
+```bash
+vagrant up --provision
+```
+* Once complete login to the hypervisor created (username & password: vagrant/vagrant)
+```bash
+vagrant ssh
+```
+* Then tail the gunicorn access logs:
+```bash
+cd /vagrant
+tail -f ./gunicorn-access.log
+```
+* Open a browser on your host and go to: http://localhost
+* You should see the TODO app and in the logs a new entry
+
+NOTE: if there is already a binding on port 80 in your host you can change the port on Vargantfile (replace xxxx with your desired port):
+config.vm.network "forwarded_port", guest: 5000, host: xxxx
+```
+
+
