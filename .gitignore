@@ -123,9 +123,6 @@ env/
 ### Vagrant ###
 .vagrant
 
-### Poetry ###
-poetry.lock
-
 ### gunicorn ###
 gunicorn*
 

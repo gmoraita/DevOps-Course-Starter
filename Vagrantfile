@@ -14,11 +14,7 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "hashicorp/bionic64"
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
+ 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -73,12 +69,13 @@ Vagrant.configure("2") do |config|
 	# Install pyenv prerequisites
 	sudo apt-get install -y build-essential libssl1.0-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 	
-	# Install pyenv
-	git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+
 	
 	# Set the profile and the env if this is not done before
 	if [ ! $PYENV_ROOT ]
 	then
+		# Install pyenv
+		git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 		echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
 		echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
 		echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.profile
@@ -93,9 +90,6 @@ Vagrant.configure("2") do |config|
 	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 	source ~/.profile
 	
-	# Install gunicorn
-	cd /vagrant
-	poetry run pip install gunicorn
 	
   SHELL
   
@@ -103,16 +97,17 @@ Vagrant.configure("2") do |config|
 	trigger.name = "Launching App"
 	trigger.info = "Running the TODO app setup script"
 	trigger.run_remote = {privileged: false, inline: "
-	# Install dependencies and launch
-	cd /vagrant
-	poetry install
+		# Install dependencies and launch
+		cd /vagrant
+		poetry install
 
-	# uncomment the below if you want to run flask instead of gunicorn
-	# poetry run flask run --host 0.0.0.0
-	
-	# Run gunicorn
-	poetry run gunicorn -b 0.0.0.0:5000 'todo_app.app:app' --daemon --access-logfile gunicorn-access.log --log-file gunicorn.log
-	
+		# uncomment the below if you want to run flask instead of gunicorn
+		# poetry run flask run --host 0.0.0.0
+		
+		# Run gunicorn
+		. .env
+		poetry run gunicorn -b 0.0.0.0:5000 'todo_app.app:create_app()' --daemon --access-logfile gunicorn-access.log --log-file gunicorn.log -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET -e TRELLO_USER=$TRELLO_USER -e TRELLO_BOARD_NAME=$TRELLO_BOARD_NAME
+		
 	"}
 	end
 end
