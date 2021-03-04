@@ -120,6 +120,19 @@ tail -f ./gunicorn-access.log
 
 NOTE: if there is already a binding on port 80 in your host you can change the port on Vargantfile (replace xxxx with your desired port):
 config.vm.network "forwarded_port", guest: 5000, host: xxxx
-```
+
+
+## Using Docker
+To run with Docker you need the Docker Desktop (Windows and Mac). 
+* Docker Desktop overview: https://www.docker.com/products/docker-desktop
+* Installation intructions: https://docs.docker.com/docker-for-windows/install/
+
+Once installed you can create the prod, dev and testing containers:
+Production:
+``` docker build --target production --tag todo-app:prod . ```
+
+Development & Testing
+``` docker-compose up -d ```
+you can pass the ``` --build ``` flag if you want to re-build
 
 
