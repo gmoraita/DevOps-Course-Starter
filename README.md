@@ -128,11 +128,31 @@ To run with Docker you need the Docker Desktop (Windows and Mac).
 * Installation intructions: https://docs.docker.com/docker-for-windows/install/
 
 Once installed you can create the prod, dev and testing containers:
+
 Production:
+
 ``` docker build --target production --tag todo-app:prod . ```
 
+To create and run the container use:
+
+``` docker run  -p 80:5000 --env-file .env  -d todo-app:prod ```
+On your browser go to http://localhost to view the app (in case port 80 is already bound, replace 80 in the above command with another port)
+
+
 Development & Testing
+
 ``` docker-compose up -d ```
-you can pass the ``` --build ``` flag if you want to re-build
+you can pass the ``` --build ``` flag if you want to re-build.
+
+On your browser go to http://localhost:5100 to view the app
+
+To see the logs of the test containers do the following:
+* List all containers with ```docker ps -a```
+* From the list, look at the last column "NAMES" and copy the name of the containers which have "test" 
+* Type ```docker logs <container name>``` to see the logs e.g.:
+``` docker logs devops-course-starter_todoapp-test-offline_1``` (non-selenium tests)
+``` docker logs devops-course-starter_todoapp-test-online_1``` (selenium tests)
+
+
 
 
