@@ -11,6 +11,9 @@ services:
         env_file:
             - .env
 
+        volumes:
+            - ./todo_app:/code/todo_app
+
     todoapp-test-offline:
         build:
             context: .
