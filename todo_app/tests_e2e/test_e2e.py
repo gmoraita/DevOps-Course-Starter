@@ -52,6 +52,7 @@ def test_app():
 
 @pytest.fixture(scope="module")
 def driver():
+    os.environ['MOZ_HEADLESS'] = '1'
     with Firefox() as driver:
         yield driver
  
@@ -71,17 +72,20 @@ def test_task_journey(driver: Firefox, test_app):
     
     driver.find_element_by_id("todoform").submit()
     driver.get(_TODO_URL)
+    driver.refresh()
     assert ('a test description' in driver.page_source)
     
     #check item status change to Doing
     select = Select(driver.find_element_by_id('status_select_1'))
     select.select_by_index(1)
     driver.get(_TODO_URL)
+    driver.refresh()
     assert ('/static/status_1.png' in driver.page_source)
     
 
     #check item deleted
     driver.find_element_by_id("delete_1").click()
     driver.get(_TODO_URL)
+    driver.refresh()
     assert ('a test description' not in driver.page_source)
     

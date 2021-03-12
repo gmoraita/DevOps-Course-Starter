@@ -1,0 +1,7 @@
+.env*
+.gitignore
+.git
+.vscode
+Vagrantfile
+todoapp.code-workspace
+.dockerignore

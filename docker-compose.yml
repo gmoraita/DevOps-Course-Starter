@@ -1,0 +1,36 @@
+services:
+    todoapp-dev:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: development
+            
+        ports:
+            - "5100:5100"
+        
+        env_file:
+            - .env
+
+        volumes:
+            - ./todo_app:/code/todo_app
+
+    todoapp-test-offline:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: testing-offline
+        
+        env_file:
+            - .env.test
+        
+        volumes:
+            - ./todo_app:/code/todo_app
+
+    todoapp-test-online:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: testing-online
+        
+        env_file:
+            - .env
