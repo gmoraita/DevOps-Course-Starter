@@ -154,5 +154,16 @@ To see the logs of the test containers do the following:
 ``` docker logs devops-course-starter_todoapp-test-online_1``` (selenium tests)
 
 
+## C4 
+The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Digrams.NET) format https://www.diagrams.net/ 
 
+You can view them online through their online service or dowloading their app. They also have a VSCode plugin
 
+Note - the "Code Diagram" UML classes and packages diagrams are generated from the code using pylint's pyreverse. You will need to install GraphViz (https://graphviz.org/download/)
+
+Then run:
+
+``` poetry run pyreverse -o png -p -p todo_app .```
+
+This will generate 2 files:
+```classes_-p.png``` and ```packages_-p.png``` which then can be added as images to the C4 "Code diagram" tab.
