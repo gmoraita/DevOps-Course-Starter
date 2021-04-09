@@ -159,7 +159,9 @@ The C4 Architecture diagrams are maintained in C4-Architecture-diagram file whic
 
 You can view them online through their online service or dowloading their app. They also have a VSCode plugin
 
-Note - the "Code Diagram" UML classes and packages diagrams are generated from the code using pylint's pyreverse by running:
+Note - the "Code Diagram" UML classes and packages diagrams are generated from the code using pylint's pyreverse. You will need to install GraphViz (https://graphviz.org/download/)
+
+Then run:
 
 ``` poetry run pyreverse -o png -p -p todo_app .```
 
