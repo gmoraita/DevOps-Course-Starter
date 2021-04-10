@@ -1,4 +1,4 @@
 script:
 - echo "Build the TODO list"
-- docker-compose --version
+- cp .env.template .env
 - docker-compose up -d --build
