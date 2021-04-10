@@ -1,4 +1,8 @@
 script:
 - echo "Build the TODO list"
 - cp .env.template .env
-- docker-compose up -d --build
+- docker-compose up -d
+- echo "LOGS: Offline tests"
+- docker logs devops-course-starter_todoapp-test-offline_1
+- echo "LOGS: Online tests"
+- docker logs devops-course-starter_todoapp-test-online_1
