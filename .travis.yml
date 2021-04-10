@@ -1,3 +1,3 @@
 script:
 - echo "Build the TODO list"
-- docker-compose up -d
+- docker-compose up -d --build
