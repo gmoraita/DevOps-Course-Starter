@@ -1,3 +1,5 @@
+services:
+- docker
 script:
 - echo "Build the TODO list"
 - cp .env.template .env
