@@ -167,3 +167,17 @@ Then run:
 
 This will generate 2 files:
 ```classes_-p.png``` and ```packages_-p.png``` which then can be added as images to the C4 "Code diagram" tab.
+
+## Continuous Integration using Travis CI
+Travis CI is set up to work well with GitHub but for it to work you need to enable it for any repository you want to use it for. Instructions are here: https://docs.travisci.com/user/tutorial/#to-get-started-with-travis-ci-using-github. 
+Follow the first three steps for signing up with GitHub, making sure you activate Travis CI for the TODO app repository.
+
+To run the e2e tests with selenium you will need the env variables. The .travis.yml already has those but if you want to replace follow these steps:
+* Install Ruby ```sudo apt install ruby```
+* Install Travis ```sudo gem install travis```
+* Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
+* Encrypt the environment variable TRELLO_API_KEY using: ```travis encrypt --pro TRELLO_API_KEY=<the API Key> --add```
+* Encrypt the environment variable TRELLO_API_SECRET using: ```travis encrypt --pro TRELLO_API_SECRET=<the API Secret> --add```
+ 
+
+
