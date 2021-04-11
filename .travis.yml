@@ -2,5 +2,4 @@ script:
 - echo "Build the TODO list"
 - cp .env.template .env
 - docker-compose up -d
-- sleep 20
-- docker-compose logs
+- docker run --env-file .env.test devops-course-starter_todoapp-test-offline
