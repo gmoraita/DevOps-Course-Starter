@@ -1,14 +1,17 @@
 services:
 - docker
-script:
-- echo "Build the TODO list"
+before_script:
+- echo "Test the TODO list"
 - cp .env.template .env
 - docker-compose up -d
 - docker run --env-file .env.test devops-course-starter_todoapp-test-offline
 - docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET
   devops-course-starter_todoapp-test-online
-- echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
+script:
+- echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
+- echo "Push the TODO list to Docker Hub"
+- echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
 - docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 env:
   global:
