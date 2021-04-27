@@ -2,9 +2,9 @@ services:
 - docker
 script:
 - echo "Build the TODO list"
-- cp .env.template .env
-- docker-compose up -d
+- docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test devops-course-starter_todoapp-test-offline
+- docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
 - docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET devops-course-starter_todoapp-test-online
 env:
   global:
