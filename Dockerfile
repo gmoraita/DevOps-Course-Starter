@@ -9,7 +9,7 @@ ENV PATH "/code:/root:/root/.poetry/bin:${PATH}"
 
 # add and install python requirements
 COPY pyproject.toml poetry.lock /code/
-RUN poetry install
+RUN poetry config virtualenvs.create false --local && poetry install
 
 # Copy the rest of the code
 COPY / /code/
