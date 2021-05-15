@@ -1,11 +1,11 @@
 services:
 - docker
 script:
-- echo "Test the TODO list"
-- docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
-- docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
-- docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
-- docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET todo-app:devops-course-starter_todoapp-test-online
+        #- echo "Test the TODO list"
+        #- docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
+        #- docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
+        #- docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
+        #- docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET todo-app:devops-course-starter_todoapp-test-online
 
 - echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
@@ -16,6 +16,7 @@ script:
 - docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
 - docker push registry.heroku.com/georgestodoapp/web
+- heroku container:login
 - heroku container:release web -a georgestodoapp
 
 env:
