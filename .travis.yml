@@ -15,8 +15,8 @@ script:
 
 - docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
+- docker login --username=gmoraita --password=$(heroku auth:token) registry.heroku.com
 - docker push registry.heroku.com/georgestodoapp/web
-- heroku container:login
 - heroku container:release web -a georgestodoapp
 
 env:
