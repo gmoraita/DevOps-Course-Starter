@@ -8,6 +8,7 @@ script:
 - docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
+- HEROKU_API_KEY=$HEROKU_API_KEY heroku container:login
 - docker push registry.heroku.com/georgestodoapp/web
 - HEROKU_API_KEY=$HEROKU_API_KEY heroku container:release web -a georgestodoapp
 env:
