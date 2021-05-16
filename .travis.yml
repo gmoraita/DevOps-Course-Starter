@@ -26,7 +26,6 @@ script:
 - HEROKU_API_KEY=$HEROKU_API_KEY heroku container:login
 - docker push registry.heroku.com/georgestodoapp/web
 - HEROKU_API_KEY=$HEROKU_API_KEY heroku container:release web -a georgestodoapp
-    on:
 
 
 env:
