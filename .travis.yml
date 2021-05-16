@@ -1,9 +1,7 @@
 services:
 - docker
 
-branches:
-  only:
-    - master
+branch: master
 
 
 before_script:
