@@ -10,7 +10,7 @@ before_script:
 
 deploy:
     provider: script
-    script: deploy.sh
+    script: bash deploy.sh
     on:
       branches:
         - master

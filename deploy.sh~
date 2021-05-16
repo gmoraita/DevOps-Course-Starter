@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "Build the TODO list"
 docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
 echo "Push the TODO list to Docker Hub"
