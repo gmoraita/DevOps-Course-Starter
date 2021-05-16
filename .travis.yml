@@ -1,7 +1,10 @@
 services:
 - docker
 
-branch: master
+branches:
+  only:
+    - master
+    - module_8
 
 
 before_script:
@@ -15,9 +18,12 @@ before_script:
 script: 
 - echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
+
 - echo "Push the TODO list to Docker Hub"
 - echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
 - docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
+
+- echo "Push the TODO list to Heroku"
 - docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
 - HEROKU_API_KEY=$HEROKU_API_KEY heroku container:login
