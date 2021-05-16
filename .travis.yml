@@ -8,17 +8,13 @@ before_script:
 - docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
 - docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET todo-app:devops-course-starter_todoapp-test-online
 
-script:
-- echo "Build the TODO list"
-- docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
-- echo "Push the TODO list to Docker Hub"
-- echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
-- docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
-- docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
-- docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
-- HEROKU_API_KEY=$HEROKU_API_KEY heroku container:login
-- docker push registry.heroku.com/georgestodoapp/web
-- HEROKU_API_KEY=$HEROKU_API_KEY heroku container:release web -a georgestodoapp
+deploy:
+    provider: script
+    script: deploy.sh
+    on:
+      branches:
+        - master
+        - module_8
 
 env:
   global:
