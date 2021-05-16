@@ -1,13 +1,15 @@
+branch: module_8
 services:
 - docker
 
-script:
+before_script:
 - echo "Test the TODO list"
 - docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
 - docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
 - docker run  -e TRELLO_API_KEY=$TRELLO_API_KEY -e TRELLO_API_SECRET=$TRELLO_API_SECRET todo-app:devops-course-starter_todoapp-test-online
 
+script:
 - echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
 
