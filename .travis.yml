@@ -10,6 +10,8 @@ script:
 
 - echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
+
+deploy:  
 - echo "Push the TODO list to Docker Hub"
 - echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
 - docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
