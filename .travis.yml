@@ -4,7 +4,6 @@ services:
 branches:
   only:
     - master
-    - module_8
 
 
 before_script:
