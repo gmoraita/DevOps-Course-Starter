@@ -1,32 +1,48 @@
 import pytest
 from dotenv import find_dotenv , load_dotenv
 from todo_app import app
-from .mock_responses import MockResponses
-from mongomock import patch, MongoClient
+import mongomock
+import pymongo
 from ..data.boardelements import BoardStatus, Item
 from datetime import datetime
 import os
+from bson.objectid import ObjectId
 
-mockresponses = MockResponses()
 
-def mock_db_records():
-    
-    mock_tasks = [  {
-                    Item.item_title: "Task 1",
-                    Item.item_due_date: "12/03/2021",
-                    Item.item_description: "My cool task 1",
-                    Item.item_status: BoardStatus._TODO, 
-                    Item.item_last_updated: datetime.utcnow()
-                }, 
-                {
-                    Item.item_title: "Task 2",
-                    Item.item_due_date: "14/03/2021",
-                    Item.item_description: "My cool task 2",
-                    Item.item_status: BoardStatus._TODO, 
-                    Item.item_last_updated: datetime.utcnow()
-                }]
+initial_mock_tasks = [{
+        Item.item_title: "Task 1",
+        Item.item_due_date: "12/03/2021",
+        Item.item_description: "My cool task 1",
+        Item.item_status: BoardStatus._TODO, 
+        Item.item_last_updated: datetime.utcnow()
+    }, 
+    {
+        Item.item_title: "Task 2",
+        Item.item_due_date: "14/03/2021",
+        Item.item_description: "My cool task 2",
+        Item.item_status: BoardStatus._TODO, 
+        Item.item_last_updated: datetime.utcnow()
+    }]
    
-    return mock_tasks
+new_task = {
+        Item.item_title: "Task 3",
+        Item.item_due_date: "17/03/2021",
+        Item.item_description: "My cool task 3"
+    }
+
+task_to_be_deleted = {
+        Item.item_title: "Task 4",
+        Item.item_due_date: "22/03/2021",
+        Item.item_description: "My cool task 4",
+        Item.item_status: BoardStatus._TODO
+    }
+
+task_to_be_moved = {
+        Item.item_title: "Task 5",
+        Item.item_due_date: "29/03/2021",
+        Item.item_description: "My cool task 5",
+        Item.item_status: BoardStatus._TODO
+    }
 
 @pytest.fixture
 def app_client():
@@ -34,28 +50,52 @@ def app_client():
     file_path = find_dotenv('.env.test')
     load_dotenv(file_path, override=True)
 
-    # Create the new app.
-    test_app = app.create_app()
-    # Use the app to create a test_client that can be used in our tests.
-    with test_app.test_client() as app_client:
-        yield app_client  
+    # Initialise mongomock here.
+    with mongomock.patch(servers=(('fakemongo', 27017),)):
+        # Create the new app.
+        test_app = app.create_app()
+        # Use the app to create a test_client that can be used in our tests.
+        with test_app.test_client() as client:
+            yield client
 
 
-@patch(servers=(('fakemongo', 27017),))
-def test_add_record(app_client):
+def test_show_tasks(app_client):
     db_conn = os.getenv('DB_CONNECTION_STRING')
-    client = MongoClient(db_conn)
-    tasks = client.get_default_database().todoapp['tasks']
-    tasks.insert_many(mock_db_records())
+    client = pymongo.MongoClient(db_conn)
+    tasks = client.todoapp['tasks']
+    tasks.insert_many(initial_mock_tasks)
     
-
-    response = app_client.post('/add', data=dict(mock_db_records()[0]))
+    response = app_client.get('/')
     assert response.status_code == 200 
+    assert tasks.find({Item.item_title: "Task 1"}) is not None
 
-    #html_string = str(response.data)
-    #assert 'Task 1' in html_string
-    #assert html_string.count('status_0') == 4 # 4 in todo
-    #assert html_string.count('status_1') == 3 # 3 doing
-    #assert html_string.count('status_2') == 5 # 5 done
+def test_add_task(app_client):
+    db_conn = os.getenv('DB_CONNECTION_STRING')
+    client = pymongo.MongoClient(db_conn)
+    tasks = client.todoapp['tasks']
 
+    response = app_client.post('/add', data=dict(new_task))
+    assert response.status_code == 200 
+    assert tasks.find({Item.item_title: "Task 3"}) is not None
 
+def test_delete_task(app_client):
+    db_conn = os.getenv('DB_CONNECTION_STRING')
+    client = pymongo.MongoClient(db_conn)
+    tasks = client.todoapp['tasks']
+    inserted_id = tasks.insert_one(task_to_be_deleted).inserted_id
+    
+    assert tasks.find_one({Item.item_id: inserted_id}) is not None
+    response = app_client.post('/delete/%s' % ObjectId(inserted_id))
+    assert response.status_code == 200 
+    assert tasks.find_one({Item.item_id: inserted_id}) is None
+
+def test_move_task(app_client):
+    db_conn = os.getenv('DB_CONNECTION_STRING')
+    client = pymongo.MongoClient(db_conn)
+    tasks = client.todoapp['tasks']
+    inserted_id = tasks.insert_one(task_to_be_moved).inserted_id
+    
+    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: BoardStatus._TODO}) is not None
+    response = app_client.post('/setstatus/%s/%s' % (ObjectId(inserted_id), BoardStatus._DONE))
+    assert response.status_code == 200 
+    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: BoardStatus._DONE}) is not None

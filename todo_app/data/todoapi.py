@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from .boardelements import *
-from pymongo import MongoClient
+import pymongo
 import requests
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -8,7 +8,7 @@ from datetime import datetime
 class TodoAPI():
     def __init__(self, config):
         
-        self.tasks = MongoClient(config.get('DB_CONNECTION_STRING')).todoapp['tasks']
+        self.tasks = pymongo.MongoClient(config.get('DB_CONNECTION_STRING')).todoapp['tasks']
         
     def get_list_of_items(self): 
         return self.build_items_list(self.tasks.find())
