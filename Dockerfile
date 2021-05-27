@@ -12,7 +12,7 @@ COPY pyproject.toml poetry.lock /code/
 RUN poetry config virtualenvs.create false --local && poetry install
 
 # Copy the rest of the code
-COPY / /code/
+COPY /todo_app /code/todo_app
 
 # Development 
 FROM base as development
@@ -22,6 +22,7 @@ CMD ["poetry", "run", "flask", "run", "--host", "0.0.0.0", "-p", "5100"]
 # Production
 FROM base as production
 EXPOSE 5000
+ENV PORT=5000
 CMD poetry run gunicorn -b 0.0.0.0:$PORT 'todo_app.app:create_app()' --access-logfile gunicorn-access.log --log-file gunicorn.log
 
 # Testing - Offline
