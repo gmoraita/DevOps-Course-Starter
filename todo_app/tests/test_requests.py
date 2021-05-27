@@ -1,7 +1,6 @@
 import pytest
 from dotenv import find_dotenv , load_dotenv
 from todo_app import app
-from mock import patch, Mock
 from .mock_responses import MockResponses
 from mongomock import patch, MongoClient
 from ..data.boardelements import BoardStatus, Item
