@@ -182,7 +182,7 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 ## Continuous Deployment using Heroku
 Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
 
-You will need to set on Heroku the env vatiables:
+You will need to set on Heroku the env variables:
 ``` 
 heroku config:set `cat .env | grep TRELLO_API_KEY` -a <heroku_app_name> 
 heroku config:set `cat .env | grep TRELLO_API_SECRET` -a <heroku_app_name> 
