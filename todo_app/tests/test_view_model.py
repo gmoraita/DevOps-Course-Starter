@@ -10,43 +10,44 @@ _STATUS_DONE_ID = '3'
 
 
 def create_test_item(id, title, due_date, description, status, last_updated_date = datetime.utcnow().strftime(r'%Y-%m-%dT%H:%M:%SZ')):
-    return Item({Item.item_id: id, Item.item_title: title, Item.item_due_date: due_date, Item.item_description: description, Item.item_status: status, Item.item_last_updated: last_updated_date })
+    item_dict = {
+                    Item.item_id: id, 
+                    Item.item_title: title, 
+                    Item.item_due_date: due_date, 
+                    Item.item_description: description, 
+                    Item.item_status: status, 
+                    Item.item_last_updated: datetime.utcnow()
+                }
+    
+    return Item(item_dict)
 
-def create_test_board_statuses():
-    return {
-            _STATUS_TODO_ID: BoardStatus({BoardStatus.boardstatus_id: _STATUS_TODO_ID, BoardStatus.boardstatus_name: 'To Do'}),
-            _STATUS_DOING_ID: BoardStatus({BoardStatus.boardstatus_id: _STATUS_DOING_ID, BoardStatus.boardstatus_name: 'Doing'}),
-            _STATUS_DONE_ID: BoardStatus({BoardStatus.boardstatus_id: _STATUS_DONE_ID, BoardStatus.boardstatus_name: 'Done'})
-        }
 
 def create_test_items():
     test_items = []
     for x in range(0,16):
         status = ''
         if x < 3:
-            status = _STATUS_TODO_ID
+            status = BoardStatus._TODO
         elif x < 10:
-            status = _STATUS_DOING_ID
+            status = BoardStatus._DOING
         else:
-            status = _STATUS_DONE_ID
+            status = BoardStatus._DONE
         
         test_items.append(create_test_item(str(x), 'Test %d' % x, '02/02/2021', ' My Test %d is nice' % x, status))
     
     return test_items
 
-def create_test_board(test_board_statuses):
-    return Board({Board.board_id: '1', Board.board_name: _TEST_BOARD_NAME, Board.board_statuses: test_board_statuses})
 
 @pytest.fixture()
 def my_viewmodel():
-    return ViewModel(create_test_items(), create_test_board(create_test_board_statuses()), Item)
+    return ViewModel(create_test_items(), Item)
     
 
 def move_last_updated_to_the_past(items, num):
     if num > len(items):
         num = len(items) -1 
     for x in range(0,num):
-        items[x].last_updated = '2020-01-01T00:00:00.000Z'
+        items[x].last_updated = datetime.fromisoformat('2020-01-01T00:00:00.000+00:00')
         
     
 def test_get_todo_items(my_viewmodel):

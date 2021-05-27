@@ -19,9 +19,9 @@
               {# Below sets the variable pos (for workflow position) which is used in identifying which status icon to load #}
               {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
               
-              {% set statusesId_list = statuses.keys()|list%}
-              {% if statusesId_list[0] == item.status %} {%set pos=0%}
-              {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
+              
+              {% if item.status == statuses.0 %} {%set pos=0%}
+              {% elif item.status == statuses|last %} {%set pos=2%}
               {% else %} {%set pos=1%}
               {% endif %}
               <tr>
@@ -33,14 +33,14 @@
                   {%if item.due_date != None%}{{ item.due_date|strftime }}
                   {% else %}{% endif %}
                 </td>
-                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{statuses[item.status].name}}</td>
+                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{item.status}}</td>
                 
-                <td style="width: 150px;text-align: center;">
+                <td style="width: 150px;text-align: center;"> 
                   <select id="status_select_{{item.id_short}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
                     <option ></option>
-                    {% for status_id, status in statuses.items() %}
-                      {% if item.status != status_id %}
-                        <option value="{{status_id}}">{{status.name}}</option>
+                    {% for status in statuses %}
+                      {% if item.status != status %}
+                        <option value="{{status}}">{{status}}</option>
                       {% endif %}
                     {% endfor %}
                   </select>

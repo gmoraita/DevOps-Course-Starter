@@ -12,6 +12,8 @@ python-dateutil = "2.7.3"
 requests = "2.22.0"
 gunicorn = "20.0.4"
 pylint = "^2.7.2"
+pymongo = {extras = ["srv"], version = "^3.11.4"}
+mongomock = "^3.22.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
