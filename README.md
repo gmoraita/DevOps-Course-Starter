@@ -179,5 +179,24 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Encrypt the environment variable TRELLO_API_KEY using: ```travis encrypt --pro TRELLO_API_KEY=<the API Key> --add```
 * Encrypt the environment variable TRELLO_API_SECRET using: ```travis encrypt --pro TRELLO_API_SECRET=<the API Secret> --add```
  
+## Continuous Deployment using Heroku
+Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
+
+You will need to set on Heroku the env variables:
+``` 
+heroku config:set `cat .env | grep TRELLO_API_KEY` -a <heroku_app_name> 
+heroku config:set `cat .env | grep TRELLO_API_SECRET` -a <heroku_app_name> 
+heroku config:set `cat .env | grep TRELLO_USER` -a <heroku_app_name> 
+heroku config:set `cat .env | grep TRELLO_BOARD_NAME` -a <heroku_app_name> 
+```
+
+NOTE: If not done yet, please encrypt the environment variable HEROKU_API_KEY using: ```travis encrypt --pro HEROKU_API_KEY=<the API Secret> --add```
+
+Then make a change and commit to github
+
+You can goto https://travis-com/dashboard and then select the repository to see the build progress
+
+Once complete you can open the application on your browser:
+``` heroku open -a <heroku_app_name> 
 
 
