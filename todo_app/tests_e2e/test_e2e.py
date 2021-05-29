@@ -1,7 +1,6 @@
 import pytest
 import pymongo
 from dotenv import find_dotenv , load_dotenv
-from todo_app.data.trelloapicaller import TrelloAPICaller
 from todo_app.data.boardelements import Item
 from todo_app import app
 from datetime import datetime
@@ -52,7 +51,6 @@ def driver():
     with Firefox() as driver:
         yield driver
  
-    
 def test_task_journey(driver: Firefox, test_app):
     #check board created
     driver.get(_TODO_URL)

@@ -32,18 +32,16 @@ $ cp .env.template .env  # (first time only)
 
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
-## Adding Trello credentials
-In order to call the Trello API, you need to first create an account on https://trello.com/signup., then generate an API key and token by following the
-instructions here: https://trello.com/app-key.
+## Database Connectivity
+The TODO app use a MongoDB database cluster hosted on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). There is a free tier, which is suitable for the purposes of this app. If you choose the "I'm learning MongoDB" option at sign-up then the set-up instructions are very intuitive. Start the sign-up process [here](https://www.mongodb.com/try) and refer to the below for guidance:
+* Cloud & Region: Select any nearer your region
+* Security: Select username/password authentication and select the IP from where your app is hosted
+Note that once created, the cluster might take a bit of time to spin up
 
-Once complete you need to copy the key and token from that page.
-
-* At the root of the project make a copy of the .env_template and name it .env file
-* Fill in the variables as per below:
-TRELLO_API_KEY=<your trello key>
-TRELLO_API_SECRET=<your trello token>
-TRELLO_USER=<your trello username>
-TRELLO_BOARD_NAME=<the name of the board you want to use>
+Change the ```.env``` you created to add the connection string on ```DB_CONNECTION_STRING```. Replace the placeholders for username, passowrd and cluster as follows:
+* USER_NAME: Created when you signed up to MongoDB Atalas. A list is visible in the "Database Access" menu under the "Security" heading
+* PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
+* CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends .mongodb.net
 
 ## Running the App
 
