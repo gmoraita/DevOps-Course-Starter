@@ -153,7 +153,7 @@ To see the logs of the test containers do the following:
 
 
 ## C4 
-The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Digrams.NET) format https://www.diagrams.net/ 
+The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Diagrams.NET) format https://www.diagrams.net/ 
 
 You can view them online through their online service or dowloading their app. They also have a VSCode plugin
 
