@@ -44,6 +44,11 @@ task_to_be_moved = {
         Item.item_status: BoardStatus._TODO
     }
 
+def get_db_collection():
+    db_conn = os.getenv('DB_CONNECTION_STRING')
+    client = pymongo.MongoClient(db_conn)
+    return client.todoapp[os.getenv('DATA_COLLECTION')]
+
 @pytest.fixture
 def app_client():
     # Use our test integration config instead of the 'real' version
@@ -60,9 +65,7 @@ def app_client():
 
 
 def test_show_tasks(app_client):
-    db_conn = os.getenv('DB_CONNECTION_STRING')
-    client = pymongo.MongoClient(db_conn)
-    tasks = client.todoapp['tasks']
+    tasks = get_db_collection() 
     tasks.insert_many(initial_mock_tasks)
     
     response = app_client.get('/')
@@ -70,18 +73,14 @@ def test_show_tasks(app_client):
     assert tasks.find({Item.item_title: "Task 1"}) is not None
 
 def test_add_task(app_client):
-    db_conn = os.getenv('DB_CONNECTION_STRING')
-    client = pymongo.MongoClient(db_conn)
-    tasks = client.todoapp['tasks']
+    tasks = get_db_collection() 
 
     response = app_client.post('/add', data=dict(new_task))
     assert response.status_code == 200 
     assert tasks.find({Item.item_title: "Task 3"}) is not None
 
 def test_delete_task(app_client):
-    db_conn = os.getenv('DB_CONNECTION_STRING')
-    client = pymongo.MongoClient(db_conn)
-    tasks = client.todoapp['tasks']
+    tasks = get_db_collection() 
     inserted_id = tasks.insert_one(task_to_be_deleted).inserted_id
     
     assert tasks.find_one({Item.item_id: inserted_id}) is not None
@@ -90,9 +89,7 @@ def test_delete_task(app_client):
     assert tasks.find_one({Item.item_id: inserted_id}) is None
 
 def test_move_task(app_client):
-    db_conn = os.getenv('DB_CONNECTION_STRING')
-    client = pymongo.MongoClient(db_conn)
-    tasks = client.todoapp['tasks']
+    tasks = get_db_collection() 
     inserted_id = tasks.insert_one(task_to_be_moved).inserted_id
     
     assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: BoardStatus._TODO}) is not None

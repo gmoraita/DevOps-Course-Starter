@@ -4,7 +4,7 @@
         <table class="table table-sm table-hover">
           <thead class="thead-dark"> 
             <tr>
-              <th style="width: 50px;">Id</th>
+              
               <th>Title</th>
               <th>Description</th>
               <th>Due</th>
@@ -25,8 +25,6 @@
               {% else %} {%set pos=1%}
               {% endif %}
               <tr>
-                
-                <td style="width: 10px;">{{ item.id_short }}</td>
                 <td>{{item.title}}</td>
                 <td>{{item.description}}</td>
                 <td>
@@ -36,7 +34,7 @@
                 <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{item.status}}</td>
                 
                 <td style="width: 150px;text-align: center;"> 
-                  <select id="status_select_{{item.id_short}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
+                  <select id="status_select_{{item.id}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
                     <option ></option>
                     {% for status in statuses %}
                       {% if item.status != status %}
@@ -46,7 +44,7 @@
                   </select>
                   
                 </td>
-                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id_short}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
+                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
                 
                 
               </tr>

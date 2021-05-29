@@ -1,4 +1,5 @@
 import pytest
+import pymongo
 from dotenv import find_dotenv , load_dotenv
 from todo_app.data.trelloapicaller import TrelloAPICaller
 from todo_app.data.boardelements import Item
@@ -11,22 +12,17 @@ from seleniumrequests import Firefox
 from selenium.webdriver.support.ui import Select
 from todo_app.app_config import Config
 
-
-_TEST_BOARD_NAME = 'test_board_todotest'
 _TODO_URL = 'http://localhost:5000'
 
 
-def create_temp_board():
-    api = TrelloAPICaller(Config().asDict())
-    board = api.call_api('/boards/', 'POST', {'name': _TEST_BOARD_NAME+'_'+datetime.now().strftime(r"%Y%m%d%H%M%S%f")}).json()
+def create_temp_collection():
+    temp_collection_name = 'temptasks_%s' % datetime.now().strftime(r"%Y%m%d%H%M%S%f")
+    return temp_collection_name
+
+def delete_temp_collection(temp_collection_name):
+    test_tasks = pymongo.MongoClient(Config().DB_CONNECTION_STRING).todoapp[temp_collection_name]
+    test_tasks.drop()
     
-    return board.get('id')
-
-def delete_temp_board(board_id):
-    api = TrelloAPICaller(Config().asDict())
-    api.call_api('/boards/%s' % board_id, 'DELETE').json()
-
-
 @pytest.fixture(scope='module')
 def test_app():
     # Load the env file
@@ -34,8 +30,8 @@ def test_app():
     load_dotenv(file_path, override=True)
     
     # Create the new board & update the board id environment variable
-    board_id = create_temp_board()
-    os.environ['TRELLO_BOARD_ID'] = board_id    
+    test_tasks = create_temp_collection()
+    os.environ['DATA_COLLECTION'] = test_tasks    
     
     # construct the new application
     application = app.create_app()
@@ -48,7 +44,7 @@ def test_app():
     
     # Tear Down
     thread.join(1)
-    delete_temp_board(board_id)
+    delete_temp_collection(test_tasks)
 
 @pytest.fixture(scope="module")
 def driver():
@@ -75,8 +71,11 @@ def test_task_journey(driver: Firefox, test_app):
     driver.refresh()
     assert ('a test description' in driver.page_source)
     
+    #get task id added
+    taskid = driver.page_source[driver.page_source.find('status_select_')+len('status_select_'):driver.page_source.find('status_select_')+len('status_select_')+24]
+
     #check item status change to Doing
-    select = Select(driver.find_element_by_id('status_select_1'))
+    select = Select(driver.find_element_by_id('status_select_%s' % taskid))
     select.select_by_index(1)
     driver.get(_TODO_URL)
     driver.refresh()
@@ -84,7 +83,7 @@ def test_task_journey(driver: Firefox, test_app):
     
 
     #check item deleted
-    driver.find_element_by_id("delete_1").click()
+    driver.find_element_by_id("delete_%s" % taskid).click()
     driver.get(_TODO_URL)
     driver.refresh()
     assert ('a test description' not in driver.page_source)

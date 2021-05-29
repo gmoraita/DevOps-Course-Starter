@@ -7,8 +7,7 @@ from datetime import datetime
 
 class TodoAPI():
     def __init__(self, config):
-        
-        self.tasks = pymongo.MongoClient(config.get('DB_CONNECTION_STRING')).todoapp['tasks']
+        self.tasks = pymongo.MongoClient(config.get('DB_CONNECTION_STRING')).todoapp[config.get('DATA_COLLECTION')]
         
     def get_list_of_items(self): 
         return self.build_items_list(self.tasks.find())
