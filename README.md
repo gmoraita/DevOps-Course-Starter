@@ -174,14 +174,21 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-* Encrypt the username: ```travis encrypt --pro DB_USERNAME=<db username>```
-* Encrypt the password: ```travis encrypt --pro DB_PASSWORD=<db password>```
-* Encrypt the cluster (for extra security): ```travis encrypt --pro DB_CLUSTER=<mongo DB cluster>```
+* Encrypt the username: ```travis encrypt --pro DB_USERNAME=<db username> --add```
+* Encrypt the password: ```travis encrypt --pro DB_PASSWORD=<db password> --add```
+* Encrypt the cluster (for extra security): ```travis encrypt --pro DB_CLUSTER=<mongo DB cluster> --add```
+
  
 ## Continuous Deployment using Heroku
 Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
 
-You will need to set on Heroku the env variables:
+You will first need to add the Docker username and password to the travis configuration
+```
+travis encrypt --pro DOCKER_USER=<docker username> --add
+travis encrypt --pro DOCKER_PWD=<docker password> --add
+```
+
+Then You will need to set on Heroku the env variables:
 ``` 
 heroku config:set `cat .env | grep DB_USERNAME` -a <heroku_app_name>
 heroku config:set `cat .env | grep DB_PASSWORD` -a <heroku_app_name>
