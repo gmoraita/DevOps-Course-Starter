@@ -174,7 +174,8 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-* Encrypt the database config parameter ```DB_CONNECTION_STRING``` as it contains the password, using: ```travis encrypt --pro 'DB_CONNECTION_STRING=<the database connection string>' --add```
+* Encrypt the database config parameter ```DB_CONNECTION_STRING``` as it contains the password, using: ```travis encrypt --pro DB_CONNECTION_STRING=<the database connection string> --add``` (ensure you make & to \& if exists)
+* Ecrypt the data cluster parameter: ```travis encrypt --pro DATA_CLUSTER=<the data cluster> --add```
 
  
 ## Continuous Deployment using Heroku
