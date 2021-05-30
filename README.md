@@ -183,8 +183,9 @@ Everytime there is a commit, there will also be an automatic deployment to Herok
 
 You will need to set on Heroku the env variables:
 ``` 
-heroku config:set `cat .env | grep DB_CONNECTION_STRING` -a <heroku_app_name>
-heroku config:set `cat .env | grep DATA_COLLECTION` -a <heroku_app_name>
+heroku config:set `cat .env | grep DB_USERNAME` -a <heroku_app_name>
+heroku config:set `cat .env | grep DB_PASSWORD` -a <heroku_app_name>
+heroku config:set `cat .env | grep DB_CLUSTER` -a <heroku_app_name>
 ```
 
 NOTE: If not done yet, please encrypt the environment variable HEROKU_API_KEY using: ```travis encrypt --pro HEROKU_API_KEY=<the API Secret> --add```
