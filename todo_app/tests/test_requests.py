@@ -47,7 +47,7 @@ task_to_be_moved = {
 def get_db_collection():
     db_conn = os.getenv('DB_CONNECTION_STRING')
     client = pymongo.MongoClient(db_conn)
-    return client.todoapp[os.getenv('DATA_COLLECTION')]
+    return client.todoapp['tasks']
 
 @pytest.fixture
 def app_client():
