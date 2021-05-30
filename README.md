@@ -38,10 +38,10 @@ The TODO app use a MongoDB database cluster hosted on [MongoDB Atlas](https://ww
 * Security: Select username/password authentication and select the IP from where your app is hosted
 Note that once created, the cluster might take a bit of time to spin up
 
-Change the ```.env``` you created to add the connection string on ```DB_CONNECTION_STRING```. Replace the placeholders for database, username and cluster as follows:
-* USER_NAME: Created when you signed up to MongoDB Atalas. A list is visible in the "Database Access" menu under the "Security" heading
-* PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
-* CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends with mongodb.net
+Change the ```.env``` you created and add the following information:
+* DB_USERNAME: Created when you signed up to MongoDB Atalas. A list is visible in the "Database Access" menu under the "Security" heading
+* DB_PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
+* DB_CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends with mongodb.net
 
 ## Running the App
 
@@ -174,9 +174,9 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-* Encrypt the database config parameter ```DB_CONNECTION_STRING``` as it contains the password, using: ```travis encrypt --pro DB_CONNECTION_STRING=<the database connection string> --add``` (ensure you make & to \& if exists)
-* Ecrypt the data cluster parameter: ```travis encrypt --pro DATA_CLUSTER=<the data cluster> --add```
-
+* Encrypt the username: ```travis encrypt --pro DB_USERNAME=<db username>```
+* Encrypt the password: ```travis encrypt --pro DB_PASSWORD=<db password>```
+* Encrypt the cluster (for extra security): ```travis encrypt --pro DB_CLUSTER=<mongo DB cluster>```
  
 ## Continuous Deployment using Heroku
 Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
