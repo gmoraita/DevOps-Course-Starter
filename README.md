@@ -43,6 +43,10 @@ Change the ```.env``` you created and add the following information:
 * DB_PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
 * DB_CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends with mongodb.net
 
+You can run a local mongoDB for dev purposes by running:
+```docker-compose up -d todoapp-local-mongodb```
+It will spin a local mongoDB from a cloud image. You can connect at the default 27017 port. Any records added will persist in local volume created in ```./localmongodb``` so you can find them later even if you bring the container down
+
 ## Running the App
 
 Once the all dependencies have been installed, start the Flask app in development mode within the poetry environment by running:
