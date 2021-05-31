@@ -35,7 +35,7 @@ The `.env` file is used by flask to set environment variables when running `flas
 ## Database Connectivity
 The TODO app use a MongoDB database cluster hosted on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). There is a free tier, which is suitable for the purposes of this app. If you choose the "I'm learning MongoDB" option at sign-up then the set-up instructions are very intuitive. Start the sign-up process [here](https://www.mongodb.com/try) and refer to the below for guidance:
 * Cloud & Region: Select any nearer your region
-* Security: Select username/password authentication and select the IP from where your app is hosted
+* Security: Select username/password authentication and connection from any IP
 Note that once created, the cluster might take a bit of time to spin up
 
 Change the ```.env``` you created and add the following information:
