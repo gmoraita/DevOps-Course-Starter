@@ -3,7 +3,7 @@ from dotenv import find_dotenv , load_dotenv
 from todo_app import app
 import mongomock
 import pymongo
-from ..data.boardelements import BoardStatus, Item
+from ..data.item import Item
 from datetime import datetime
 import os
 from bson.objectid import ObjectId
@@ -13,35 +13,31 @@ initial_mock_tasks = [{
         Item.item_title: "Task 1",
         Item.item_due_date: "12/03/2021",
         Item.item_description: "My cool task 1",
-        Item.item_status: BoardStatus._TODO, 
+        Item.item_status: Item.TODO, 
         Item.item_last_updated: datetime.utcnow()
     }, 
     {
         Item.item_title: "Task 2",
         Item.item_due_date: "14/03/2021",
         Item.item_description: "My cool task 2",
-        Item.item_status: BoardStatus._TODO, 
+        Item.item_status: Item.TODO, 
         Item.item_last_updated: datetime.utcnow()
     }]
    
-new_task = {
-        Item.item_title: "Task 3",
-        Item.item_due_date: "17/03/2021",
-        Item.item_description: "My cool task 3"
-    }
+
 
 task_to_be_deleted = {
         Item.item_title: "Task 4",
         Item.item_due_date: "22/03/2021",
         Item.item_description: "My cool task 4",
-        Item.item_status: BoardStatus._TODO
+        Item.item_status: Item.TODO
     }
 
 task_to_be_moved = {
         Item.item_title: "Task 5",
         Item.item_due_date: "29/03/2021",
         Item.item_description: "My cool task 5",
-        Item.item_status: BoardStatus._TODO
+        Item.item_status: Item.TODO
     }
 
 def get_db_collection():
@@ -73,11 +69,15 @@ def test_show_tasks(app_client):
     assert tasks.find({Item.item_title: "Task 1"}) is not None
 
 def test_add_task(app_client):
+    new_task = {
+        Item.item_title: "Task 3",
+        Item.item_due_date: "17/03/2021",
+        Item.item_description: "My cool task 3"
+    }
     tasks = get_db_collection() 
 
     response = app_client.post('/add', data=dict(new_task))
     assert response.status_code == 200 
-    assert tasks.find({Item.item_title: "Task 3"}) is not None
 
 def test_delete_task(app_client):
     tasks = get_db_collection() 
@@ -92,7 +92,7 @@ def test_move_task(app_client):
     tasks = get_db_collection() 
     inserted_id = tasks.insert_one(task_to_be_moved).inserted_id
     
-    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: BoardStatus._TODO}) is not None
-    response = app_client.post('/setstatus/%s/%s' % (ObjectId(inserted_id), BoardStatus._DONE))
+    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: Item.TODO}) is not None
+    response = app_client.post('/setstatus/%s/%s' % (ObjectId(inserted_id), Item.DONE))
     assert response.status_code == 200 
-    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: BoardStatus._DONE}) is not None
+    assert tasks.find_one({Item.item_id: inserted_id, Item.item_status: Item.DONE}) is not None

@@ -1,6 +1,6 @@
 import pytest
 from todo_app.viewmodel import ViewModel
-from todo_app.data.boardelements import *
+from todo_app.data.item import *
 from datetime import datetime
 
 _TEST_BOARD_NAME = 'test_board_todotest'
@@ -27,11 +27,11 @@ def create_test_items():
     for x in range(0,16):
         status = ''
         if x < 3:
-            status = BoardStatus._TODO
+            status = Item.TODO
         elif x < 10:
-            status = BoardStatus._DOING
+            status = Item.DOING
         else:
-            status = BoardStatus._DONE
+            status = Item.DONE
         
         test_items.append(create_test_item(str(x), 'Test %d' % x, '02/02/2021', ' My Test %d is nice' % x, status))
     

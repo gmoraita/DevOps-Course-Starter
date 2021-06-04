@@ -1,18 +1,8 @@
-class BoardStatus():
-    _TODO = 'To Do'
-    _DOING = 'Doing'
-    _DONE = 'Done'
-    _statuses = [_TODO, _DOING, _DONE]
-    boardstatus_id = 'id'
-    boardstatus_name = 'name'
-    boardstatus_pos = 'pos'
-    def __init__(self, status_dict: dict = {}):
-        self.id = status_dict.get(self.boardstatus_id,'')
-        self.name = status_dict.get(self.boardstatus_name,'')
-        self.pos = status_dict.get(self.boardstatus_pos,'')
-    
-
 class Item():
+    TODO = 'To Do'
+    DOING = 'Doing'
+    DONE = 'Done'
+    statuses = [TODO, DOING, DONE]
     item_id = '_id'
     item_id_short = 'idShort'
     item_title = 'name'

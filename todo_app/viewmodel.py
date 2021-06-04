@@ -1,13 +1,13 @@
 from datetime import datetime
 from dateutil import parser
-from .data.boardelements import BoardStatus
+from .data.item import Item
 from bson.objectid import ObjectId
 
 class ViewModel:
     def __init__(self, items, item_params=None):
         self._items = items
         self._item_params = item_params
-        self._statuses = BoardStatus._statuses
+        self._statuses = Item.statuses
 
     @property
     def items(self):
@@ -23,25 +23,25 @@ class ViewModel:
 
     @property
     def todo_items(self):
-        return self.get_items_with_status(BoardStatus._TODO)
+        return self.get_items_with_status(Item.TODO)
     @property
     def doing_items(self):
-        return self.get_items_with_status(BoardStatus._DOING)
+        return self.get_items_with_status(Item.DOING)
     @property
     def done_items(self):
-        return self.get_items_with_status(BoardStatus._DONE)
+        return self.get_items_with_status(Item.DONE)
 
     @property
     def recent_done_items(self):
-        return self.get_filtered_done_items(self.get_items_with_status(BoardStatus._DONE), False)
+        return self.get_filtered_done_items(self.get_items_with_status(Item.DONE), False)
 
     @property
     def older_done_items(self):
-        return self.get_filtered_done_items(self.get_items_with_status(BoardStatus._DONE), True)
+        return self.get_filtered_done_items(self.get_items_with_status(Item.DONE), True)
 
     @property
     def show_all_done_items(self):
-        if len(self.get_items_with_status(BoardStatus._DONE)) < 5:
+        if len(self.get_items_with_status(Item.DONE)) < 5:
             return True
         else:
             return False

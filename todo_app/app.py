@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, current_app
 from .data.todoapi import TodoAPI
-from .data.boardelements import Item
+from .data.item import Item
 from dateutil import parser
 from .viewmodel import ViewModel
 from .app_config import Config

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .boardelements import *
+from .item import Item
 import pymongo
 import requests
 from bson.objectid import ObjectId
@@ -13,7 +13,7 @@ class TodoAPI():
         return self.build_items_list(self.tasks.find())
         
     def add_item(self, item_dict, status_index = 0):
-        return self.tasks.insert_one({**item_dict, Item.item_status : BoardStatus._TODO, Item.item_last_updated: datetime.utcnow()}).inserted_id
+        return self.tasks.insert_one({**item_dict, Item.item_status : Item.TODO, Item.item_last_updated: datetime.utcnow()}).inserted_id
 
     def delete_item(self, id):
         return self.tasks.delete_one({Item.item_id : ObjectId(id)})

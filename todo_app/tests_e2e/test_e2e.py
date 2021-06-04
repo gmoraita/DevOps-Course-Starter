@@ -1,7 +1,7 @@
 import pytest
 import pymongo
 from dotenv import find_dotenv , load_dotenv
-from todo_app.data.boardelements import Item
+from todo_app.data.item import Item
 from todo_app import app
 from datetime import datetime
 import os
@@ -77,7 +77,7 @@ def test_task_journey(driver: Firefox, test_app):
     select.select_by_index(1)
     driver.get(_TODO_URL)
     driver.refresh()
-    assert ('/static/status_1.png' in driver.page_source)
+    assert ('/static/status_doing.png' in driver.page_source)
     
 
     #check item deleted
