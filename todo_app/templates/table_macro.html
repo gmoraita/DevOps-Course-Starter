@@ -4,7 +4,7 @@
         <table class="table table-sm table-hover">
           <thead class="thead-dark"> 
             <tr>
-              <th style="width: 50px;">Id</th>
+              
               <th>Title</th>
               <th>Description</th>
               <th>Due</th>
@@ -15,38 +15,33 @@
           </thead>
           <tbody>
             {% for item in status_items %}
-              
-              {# Below sets the variable pos (for workflow position) which is used in identifying which status icon to load #}
-              {# If first status then 0 (ToDo), if last status then 2 (Done) for any intermediate status then 1 (In Progress) #}
-              
-              {% set statusesId_list = statuses.keys()|list%}
-              {% if statusesId_list[0] == item.status %} {%set pos=0%}
-              {% elif statusesId_list.index(item.status) == statusesId_list|length-1 %} {%set pos=2%}
-              {% else %} {%set pos=1%}
+
+              {% if item.status == statuses.0 %} {%set status_icon='/static/status_todo.png'%}
+              {% elif item.status == statuses|last %} {%set status_icon='/static/status_done.png'%}
+              {% else %} {%set status_icon='/static/status_doing.png'%}
               {% endif %}
+
               <tr>
-                
-                <td style="width: 10px;">{{ item.id_short }}</td>
                 <td>{{item.title}}</td>
                 <td>{{item.description}}</td>
                 <td>
                   {%if item.due_date != None%}{{ item.due_date|strftime }}
                   {% else %}{% endif %}
                 </td>
-                <td><img src="/static/status_{{pos}}.png" style="height: 26px;"/> {{statuses[item.status].name}}</td>
+                <td><img src="{{status_icon}}" style="height: 26px;"/> {{item.status}}</td>
                 
-                <td style="width: 150px;text-align: center;">
-                  <select id="status_select_{{item.id_short}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
+                <td style="width: 150px;text-align: center;"> 
+                  <select id="status_select_{{item.id}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
                     <option ></option>
-                    {% for status_id, status in statuses.items() %}
-                      {% if item.status != status_id %}
-                        <option value="{{status_id}}">{{status.name}}</option>
+                    {% for status in statuses %}
+                      {% if item.status != status %}
+                        <option value="{{status}}">{{status}}</option>
                       {% endif %}
                     {% endfor %}
                   </select>
                   
                 </td>
-                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id_short}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
+                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
                 
                 
               </tr>

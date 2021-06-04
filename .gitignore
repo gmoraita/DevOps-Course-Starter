@@ -129,3 +129,6 @@ gunicorn*
 ### Gecko related ###
 geckodriver*
 
+### Ignore mongo volume ###
+localmongodb
+

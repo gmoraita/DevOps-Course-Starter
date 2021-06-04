@@ -35,3 +35,10 @@ services:
         
         env_file:
             - .env
+
+    todoapp-local-mongodb:
+        image: mongo
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./localmongodb:/data/db

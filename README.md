@@ -32,18 +32,20 @@ $ cp .env.template .env  # (first time only)
 
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
-## Adding Trello credentials
-In order to call the Trello API, you need to first create an account on https://trello.com/signup., then generate an API key and token by following the
-instructions here: https://trello.com/app-key.
+## Database Connectivity
+The TODO app use a MongoDB database cluster hosted on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). There is a free tier, which is suitable for the purposes of this app. If you choose the "I'm learning MongoDB" option at sign-up then the set-up instructions are very intuitive. Start the sign-up process [here](https://www.mongodb.com/try) and refer to the below for guidance:
+* Cloud & Region: Select any nearer your region
+* Security: Select username/password authentication and connection from any IP
+Note that once created, the cluster might take a bit of time to spin up
 
-Once complete you need to copy the key and token from that page.
+Change the ```.env``` you created and add the following information:
+* DB_USERNAME: Created when you signed up to MongoDB Atalas. A list is visible in the "Database Access" menu under the "Security" heading
+* DB_PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
+* DB_CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends with mongodb.net
 
-* At the root of the project make a copy of the .env_template and name it .env file
-* Fill in the variables as per below:
-TRELLO_API_KEY=<your trello key>
-TRELLO_API_SECRET=<your trello token>
-TRELLO_USER=<your trello username>
-TRELLO_BOARD_NAME=<the name of the board you want to use>
+You can run a local mongoDB for dev purposes by running:
+```docker-compose up -d todoapp-local-mongodb```
+It will spin a local mongoDB from a cloud image. You can connect at the default 27017 port. Any records added will persist in local volume created in ```./localmongodb``` so you can find them later even if you bring the container down
 
 ## Running the App
 
@@ -155,7 +157,7 @@ To see the logs of the test containers do the following:
 
 
 ## C4 
-The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Digrams.NET) format https://www.diagrams.net/ 
+The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Diagrams.NET) format https://www.diagrams.net/ 
 
 You can view them online through their online service or dowloading their app. They also have a VSCode plugin
 
@@ -176,18 +178,25 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-* Encrypt the environment variable TRELLO_API_KEY using: ```travis encrypt --pro TRELLO_API_KEY=<the API Key> --add```
-* Encrypt the environment variable TRELLO_API_SECRET using: ```travis encrypt --pro TRELLO_API_SECRET=<the API Secret> --add```
+* Encrypt the username: ```travis encrypt --pro DB_USERNAME=<db username> --add```
+* Encrypt the password: ```travis encrypt --pro DB_PASSWORD=<db password> --add```
+* Encrypt the cluster (for extra security): ```travis encrypt --pro DB_CLUSTER=<mongo DB cluster> --add```
+
  
 ## Continuous Deployment using Heroku
 Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
 
-You will need to set on Heroku the env variables:
+You will first need to add the Docker username and password to the travis configuration
+```
+travis encrypt --pro DOCKER_USER=<docker username> --add
+travis encrypt --pro DOCKER_PWD=<docker password> --add
+```
+
+Then You will need to set on Heroku the env variables:
 ``` 
-heroku config:set `cat .env | grep TRELLO_API_KEY` -a <heroku_app_name> 
-heroku config:set `cat .env | grep TRELLO_API_SECRET` -a <heroku_app_name> 
-heroku config:set `cat .env | grep TRELLO_USER` -a <heroku_app_name> 
-heroku config:set `cat .env | grep TRELLO_BOARD_NAME` -a <heroku_app_name> 
+heroku config:set `cat .env | grep DB_USERNAME` -a <heroku_app_name>
+heroku config:set `cat .env | grep DB_PASSWORD` -a <heroku_app_name>
+heroku config:set `cat .env | grep DB_CLUSTER` -a <heroku_app_name>
 ```
 
 NOTE: If not done yet, please encrypt the environment variable HEROKU_API_KEY using: ```travis encrypt --pro HEROKU_API_KEY=<the API Secret> --add```

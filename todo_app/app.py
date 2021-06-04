@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, current_app
-from .data.todoapi import TrelloAPI
-from .data.boardelements import Item
+from .data.todoapi import TodoAPI
+from .data.item import Item
 from dateutil import parser
 from .viewmodel import ViewModel
 from .app_config import Config
@@ -9,14 +9,13 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config()) 
     
-    todoapi = TrelloAPI(app.config) 
+    todoapi = TodoAPI(app.config) 
     
     # All the routes and setup code etc
     
     def render_index_response():
         item_view_model = ViewModel(
-            sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id)), 
-            todoapi.board, 
+            sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id)),  
             Item)
         return render_template('index.html', view_model= item_view_model)
 
@@ -31,7 +30,7 @@ def create_app():
 
     @app.route('/setstatus/<id>/<status>', methods=['POST'])
     def _setstatus(id,status):
-        todoapi.modify_item(id, {'idList': status})
+        todoapi.modify_item(id, {'status': status})
         return render_index_response()
 
     @app.route('/delete/<id>', methods=['POST'])
