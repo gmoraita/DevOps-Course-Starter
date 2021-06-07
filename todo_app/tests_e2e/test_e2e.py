@@ -14,14 +14,17 @@ from todo_app.app_config import Config
 _TODO_URL = 'http://localhost:5000'
 
 
-def create_temp_collection():
-    temp_collection_name = 'temptasks_%s' % datetime.now().strftime(r"%Y%m%d%H%M%S%f")
-    return temp_collection_name
+def create_temp_tasks_collection():
+    temp_tasks_collection_name = 'temptasks_%s' % datetime.now().strftime(r"%Y%m%d%H%M%S%f")
+    os.environ['DATA_COLLECTION'] = temp_tasks_collection_name
+    return temp_tasks_collection_name
 
-def delete_temp_collection(temp_collection_name):
-    test_tasks = pymongo.MongoClient(Config().DB_CONNECTION_STRING).todoapp[temp_collection_name]
+def delete_temp_tasks_collection(temp_tasks_collection_name):
+    test_tasks = pymongo.MongoClient(Config().DB_CONNECTION_STRING).todoapp[temp_tasks_collection_name]
     test_tasks.drop()
-    
+    del os.environ['DATA_COLLECTION']
+
+
 @pytest.fixture(scope='module')
 def test_app():
     # Load the env file
@@ -29,8 +32,7 @@ def test_app():
     load_dotenv(file_path, override=True)
     
     # Create the new board & update the board id environment variable
-    test_tasks = create_temp_collection()
-    os.environ['DATA_COLLECTION'] = test_tasks    
+    test_tasks = create_temp_tasks_collection()
     
     # construct the new application
     application = app.create_app()
@@ -43,7 +45,7 @@ def test_app():
     
     # Tear Down
     thread.join(1)
-    delete_temp_collection(test_tasks)
+    delete_temp_tasks_collection(test_tasks)
 
 @pytest.fixture(scope="module")
 def driver():

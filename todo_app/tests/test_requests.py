@@ -9,37 +9,6 @@ import os
 from bson.objectid import ObjectId
 
 
-initial_mock_tasks = [{
-        Item.item_title: "Task 1",
-        Item.item_due_date: "12/03/2021",
-        Item.item_description: "My cool task 1",
-        Item.item_status: Item.TODO, 
-        Item.item_last_updated: datetime.utcnow()
-    }, 
-    {
-        Item.item_title: "Task 2",
-        Item.item_due_date: "14/03/2021",
-        Item.item_description: "My cool task 2",
-        Item.item_status: Item.TODO, 
-        Item.item_last_updated: datetime.utcnow()
-    }]
-   
-
-
-task_to_be_deleted = {
-        Item.item_title: "Task 4",
-        Item.item_due_date: "22/03/2021",
-        Item.item_description: "My cool task 4",
-        Item.item_status: Item.TODO
-    }
-
-task_to_be_moved = {
-        Item.item_title: "Task 5",
-        Item.item_due_date: "29/03/2021",
-        Item.item_description: "My cool task 5",
-        Item.item_status: Item.TODO
-    }
-
 def get_db_collection():
     db_conn = os.getenv('DB_CONNECTION_STRING')
     client = pymongo.MongoClient(db_conn)
@@ -61,6 +30,20 @@ def app_client():
 
 
 def test_show_tasks(app_client):
+    initial_mock_tasks = [{
+        Item.item_title: "Task 1",
+        Item.item_due_date: "12/03/2021",
+        Item.item_description: "My cool task 1",
+        Item.item_status: Item.TODO, 
+        Item.item_last_updated: datetime.utcnow()
+    }, 
+    {
+        Item.item_title: "Task 2",
+        Item.item_due_date: "14/03/2021",
+        Item.item_description: "My cool task 2",
+        Item.item_status: Item.TODO, 
+        Item.item_last_updated: datetime.utcnow()
+    }]
     tasks = get_db_collection() 
     tasks.insert_many(initial_mock_tasks)
     
@@ -74,12 +57,18 @@ def test_add_task(app_client):
         Item.item_due_date: "17/03/2021",
         Item.item_description: "My cool task 3"
     }
-    tasks = get_db_collection() 
 
     response = app_client.post('/add', data=dict(new_task))
     assert response.status_code == 200 
 
 def test_delete_task(app_client):
+    task_to_be_deleted = {
+        Item.item_title: "Task 4",
+        Item.item_due_date: "22/03/2021",
+        Item.item_description: "My cool task 4",
+        Item.item_status: Item.TODO
+    }
+
     tasks = get_db_collection() 
     inserted_id = tasks.insert_one(task_to_be_deleted).inserted_id
     
@@ -89,6 +78,12 @@ def test_delete_task(app_client):
     assert tasks.find_one({Item.item_id: inserted_id}) is None
 
 def test_move_task(app_client):
+    task_to_be_moved = {
+        Item.item_title: "Task 5",
+        Item.item_due_date: "29/03/2021",
+        Item.item_description: "My cool task 5",
+        Item.item_status: Item.TODO
+    }
     tasks = get_db_collection() 
     inserted_id = tasks.insert_one(task_to_be_moved).inserted_id
     
