@@ -4,8 +4,13 @@ from .data.item import Item
 from bson.objectid import ObjectId
 
 class ViewModel:
-    def __init__(self, items):
+    def __init__(self, items, user):
         self._items = items
+        self._user = user
+
+    @property
+    def user(self):
+        return self._user
 
     @property
     def items(self):

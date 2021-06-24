@@ -7,58 +7,65 @@
   <div class="jumbotron">
     <h1 class="display-4">To-Do App</h1>
     <p class="lead">George's super-duper TO-DO app (Powered by MongoDB&reg;) on Heroku.</p>
-  </div>
+    <p class="lead" style="text-align: right ; margin-bottom: -50px;">
+      <img src="{{view_model.user.user_features.avatar_url}}" style="height: 40px;">&nbsp;{{view_model.user.id}}&nbsp;
+      {% if 'admin' in view_model.user.roles %}
+        <button onclick="location.href='/useradmin'" type="button">Edit Users</button>
+      {% endif %}
+    </p>
+ 
+ </div>
 
   <div class="row">
     <div class="col-md-12 table-responsive-md">
       <h2>Items</h2>
       <div class="wrapper loading">
         <h5>To-Do</h5>
-        {{ status_table(view_model.todo_items, view_model.statuses) }}
+        {{ status_table(view_model.todo_items, view_model.statuses, view_model.user.roles) }}
         
         <h5>Doing</h5>
-        {{ status_table(view_model.doing_items, view_model.statuses) }}
+        {{ status_table(view_model.doing_items, view_model.statuses, view_model.user.roles) }}
 
         {% if view_model.show_all_done_items%}
           <h5>Done</h5>
-          {{ status_table(view_model.done_items, view_model.statuses) }}
+          {{ status_table(view_model.done_items, view_model.statuses, view_model.user.roles) }}
         {% else %}
           <h5>Done - Recent</h5>
-          {{ status_table(view_model.recent_done_items, view_model.statuses) }}
+          {{ status_table(view_model.recent_done_items, view_model.statuses, view_model.user.roles) }}
           <details>
             <summary>Show Older Completed</summary>
             <h5>Done - Older</h5>
-            {{ status_table(view_model.older_done_items, view_model.statuses) }}
+            {{ status_table(view_model.older_done_items, view_model.statuses, view_model.user.roles) }}
           </details>
 
         {% endif %}
       </div>
       <br/><br/>
-
-      <h5>New Task</h5>
-      <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
-        <div class="form-row">
-          <div class="form-group col-md-8">
-            <input type="text" required  class="form-control" name="{{view_model.item.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
-          </div>
-          <div class="form-group col-md-4">
-            <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
-              <input class="form-control" name="{{view_model.item.item_due_date}}" type="text" placeholder="New Task Due Date" />
-              <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+      {% if 'writer' in view_model.user.roles %}
+        <h5>New Task</h5>
+        <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <input type="text" required  class="form-control" name="{{view_model.item.item_title}}" placeholder="New Task title" aria-label="New Task title" aria-describedby="basic-addon2">
             </div>
+            <div class="form-group col-md-4">
+              <div id="datepicker-group" class="input-group date" data-date-format="mm-dd-yyyy">
+                <input class="form-control" name="{{view_model.item.item_due_date}}" type="text" placeholder="New Task Due Date" />
+                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+              </div>
+            </div>
+            
           </div>
           
-        </div>
-        
-        <div class="input-group mb-3">
-          <textarea class="form-control" name="{{view_model.item.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
-        </div>
-        
-        <button class="btn btn-primary" type="submit">Add Task</button>
-        
-      
-      </form>
+          <div class="input-group mb-3">
+            <textarea class="form-control" name="{{view_model.item.item_description}}" placeholder="New Task description"aria-label="New Task title" aria-describedby="basic-addon2"></textarea>
+          </div>
           
+          <button class="btn btn-primary" type="submit">Add Task</button>
+          
+        
+        </form>
+      {% endif %}  
       </div>
     </div>
   </div>

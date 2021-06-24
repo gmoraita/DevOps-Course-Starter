@@ -79,7 +79,16 @@
         }
         
       }
-  
+
+      function toggle_role(checked, id, role){
+        url = 'usersetrole/'+id+'/'+role+'/';
+        if (checked == true){
+          url = url+'add';
+        } else {
+          url = url+'remove';
+        }
+        submitReq(url,null)
+      }
     </script>
   </body>
 </html>
