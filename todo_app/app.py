@@ -33,6 +33,16 @@ def create_app():
     
     login_manager.init_app(app)    
     # All the routes and setup code etc
+
+    def is_permitted(role):
+        return app.config.get('LOGIN_DISABLED', '') == 'True' or role in current_user.roles
+
+    def logged_user():
+        if app.config.get('LOGIN_DISABLED', '') == 'True':
+            return User({'login':'unknown', 'roles':['writer'], 'avatar':'/favicon.ico'})
+        
+        return current_user
+
     def get_user(user_id):
         return users_db.get_user(user_id)
     
@@ -45,7 +55,7 @@ def create_app():
         users_db.add_user({**user_profile, 'roles': default_roles})
     
     def render_index_response():
-        item_view_model = ViewModel(sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id)), current_user)
+        item_view_model = ViewModel(sorted(todoapi.get_list_of_items(), key=lambda item : (item.status, item.id)), logged_user())
         return render_template('index.html', view_model= item_view_model)
 
     def render_usersadmin_response():
@@ -81,7 +91,7 @@ def create_app():
     @app.route('/useradmin', methods=['GET'])
     @login_required
     def _useradmin():
-        if 'admin' not in current_user.roles:
+        if not is_permitted('admin'):
             return redirect('/', code=302)
         
         return render_usersadmin_response()
@@ -89,7 +99,7 @@ def create_app():
     @app.route('/usersetrole/<id>/<role>/<add_remove>', methods=['POST'])
     @login_required
     def _usersetrole(id,role,add_remove):
-        if 'admin' not in current_user.roles:
+        if not is_permitted('admin'):
             return redirect('/', code=302)
         
         roles = current_user.roles
@@ -111,21 +121,21 @@ def create_app():
     @app.route('/add', methods=['POST'])
     @login_required
     def _add():
-        if 'writer' in current_user.roles:
+        if is_permitted('writer'):
             todoapi.add_item(request.form)
         return render_index_response()
 
     @app.route('/setstatus/<id>/<status>', methods=['POST'])
     @login_required
     def _setstatus(id,status):
-        if 'writer' in current_user.roles:
+        if is_permitted('writer'):
             todoapi.modify_item(id, {'status': status})
         return render_index_response()
 
     @app.route('/delete/<id>', methods=['POST'])
     @login_required
     def _delete(id):
-        if 'writer' in current_user.roles:
+        if is_permitted('writer'):
             todoapi.delete_item(id)
         return render_index_response()
 

@@ -40,7 +40,7 @@ def create_test_items():
 
 @pytest.fixture()
 def my_viewmodel():
-    return ViewModel(create_test_items())
+    return ViewModel(create_test_items(), 'test_user')
     
 
 def move_last_updated_to_the_past(items, num):
