@@ -38,14 +38,18 @@
                     <td><img src="{{user.user_features.avatar_url}}" style="height: 40px;"/></td>
                     <td>{{user.id}}</td>
                     <td>
-                        <label {% if 'reader' in view_model.user.roles %} style="font-weight: bold; color: green;" {% endif %}>Reader</label>
-                        <input type="checkbox" {% if 'reader' in view_model.user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'reader' )">
+                        <label {% if 'reader' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Reader</label>
+                        <input type="checkbox" id="{{view_model.user.id}}_reader" {% if 'reader' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'reader' )">
                         &nbsp;&nbsp;
-                        <label {% if 'writer' in view_model.user.roles %} style="font-weight: bold; color: green;" {% endif %}>Writer</label> 
-                        <input type="checkbox" {% if 'writer' in view_model.user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'writer')">
+                        <label {% if 'writer' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Writer</label> 
+                        <input type="checkbox" id="{{view_model.user.id}}_writer" {% if 'writer' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'writer')">
                         &nbsp;&nbsp;
-                        <label {% if 'admin' in view_model.user.roles %} style="font-weight: bold; color: green;" {% endif %}>Admin</label> 
-                        <input type="checkbox" {% if 'admin' in view_model.user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'admin')">
+                        <label 
+                            {% if 'admin' in user.roles and view_model.users|length != 1 %} style="font-weight: bold; color: green;" 
+                            {% elif view_model.users|length == 1 %} style="font-weight: bold; color: gray;"
+                            {% endif %} 
+                            >Admin</label> 
+                        <input type="checkbox" id="{{view_model.user.id}}_admin" {% if 'admin' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'admin')" {% if view_model.users|length == 1 %} disabled {% endif %} >
                         
                     </td>
                     
@@ -56,7 +60,13 @@
 
             </tbody>
             </table>
-        
+            <div>
+                <ul>
+                    <li><strong>Reader</strong>: Can only see tasks</li>
+                    <li><strong>Writer</strong>: Can see and add/delete/move tasks</li>
+                    <li><strong>Admin</strong>: Can only see tasks and also manage users</li>
+                </ul>
+            </div>
             {% else %}No users to dislay
         {% endif %}
       </div>

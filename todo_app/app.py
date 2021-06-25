@@ -96,13 +96,14 @@ def create_app():
         
         return render_usersadmin_response()
 
-    @app.route('/usersetrole/<id>/<role>/<add_remove>', methods=['POST'])
+    @app.route('/usersetrole/<user_id>/<role>/<add_remove>', methods=['POST'])
     @login_required
-    def _usersetrole(id,role,add_remove):
+    def _usersetrole(user_id,role,add_remove):
         if not is_permitted('admin'):
             return redirect('/', code=302)
         
-        roles = current_user.roles
+        user = users_db.get_user(user_id)
+        roles = user.roles
         if role in roles and add_remove == 'remove':
             roles.remove(role)
         elif role not in roles and add_remove == 'add':
@@ -110,7 +111,7 @@ def create_app():
         else:
             pass
 
-        users_db.modify_roles(id,roles)
+        users_db.modify_roles(user_id,roles)
         return render_usersadmin_response()
 
     @app.route('/', methods=['GET'])
