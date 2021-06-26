@@ -4,20 +4,12 @@
 
 {% block content %}
   
-  <div class="jumbotron">
-    <h1 class="display-4">To-Do App</h1>
-    <p class="lead">George's super-duper TO-DO app (Powered by MongoDB&reg;) on Heroku.</p>
-    <p class="lead" style="text-align: right ; margin-bottom: -50px;">
-      <img src="{{view_model.user.user_features.avatar_url}}" style="height: 40px;">&nbsp;{{view_model.user.id}}&nbsp;
-      {% if 'admin' in view_model.user.roles %}
-        <button onclick="location.href='/useradmin'" type="button">Edit Users</button>
-      {% endif %}
-    </p>
- 
- </div>
-
   <div class="row">
     <div class="col-md-12 table-responsive-md">
+      {% if 'admin' in view_model.user.roles %}
+      <p><button onclick="location.href='/useradmin'" type="button">Edit Users</button></p>
+      
+      {% endif %}
       <h2>Items</h2>
       <div class="wrapper loading">
         <h5>To-Do</h5>

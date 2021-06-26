@@ -53,9 +53,10 @@ It will spin a local mongoDB from a cloud image. You can connect at the default 
 * For the homepage URL field enter the address for accessing the website locally.
 * For the callback add a particular path to this URL for example /login/
 callback.
-* You will need both a client-id and client-secret for your .env file. The client-secret once generated will only be shown once, so take a note of it to avoid needing to regenerate one later.
+* You will need both a client-id (```GITHUB_CLIENT_ID```) and client-secret (```GITHUB_CLIENT_SECRET```) for your ```.env``` file. The client-secret once generated will only be shown once, so take a note of it to avoid needing to regenerate one later.
 * if using ```pip``` to manage dependencies, run ```pip install oauthlib flask-login```
 
+Note: For integration with Heroku (see firther down) create an additional oauth app and add separate ```GITHUB_CLIENT_ID``` and ```GITHUB_CLIENT_SECRET```
 
 ## Running the App
 
@@ -207,13 +208,16 @@ Then You will need to set on Heroku the env variables:
 heroku config:set `cat .env | grep DB_USERNAME` -a <heroku_app_name>
 heroku config:set `cat .env | grep DB_PASSWORD` -a <heroku_app_name>
 heroku config:set `cat .env | grep DB_CLUSTER` -a <heroku_app_name>
+heroku config:set `cat .env | grep SECRET_KEY` -a <heroku_app_name>
 ```
 
 NOTE: If not done yet, please encrypt the environment variable HEROKU_API_KEY using: ```travis encrypt --pro HEROKU_API_KEY=<the API Secret> --add```
 
+Login to to Heroku and add manually the ```GITHUB_CLIENT_ID``` and ```GITHUB_CLIENT_SECRET```
+
 Then make a change and commit to github
 
-You can goto https://travis-com/dashboard and then select the repository to see the build progress
+You can goto https://travis-ci.com/dashboard and then select the repository to see the build progress
 
 Once complete you can open the application on your browser:
 ``` heroku open -a <heroku_app_name> 

@@ -4,18 +4,12 @@
 
 {% block content %}
   
-  <div class="jumbotron">
-    <h1 class="display-4">To-Do App</h1>
-    <p class="lead">George's super-duper TO-DO app (Powered by MongoDB&reg;) on Heroku.</p>
-    <p class="lead" style="text-align: right ; margin-bottom: -50px;">
-      <img src="{{view_model.user.user_features.avatar_url}}" style="height: 40px;">&nbsp;{{view_model.user.id}}&nbsp;
-        <button onclick="location.href='/'" type="button">Exit User Admin</button>
-    </p>
- 
- </div>
-
+  <div class="row">
+    
+  </div>
   <div class="row">
     <div class="col-md-12 table-responsive-md">
+      <p><button onclick="location.href='/'" type="button">Exit User Admin</button></p>
       <h2>Users</h2>
       <div class="wrapper loading">
         {% if view_model.users|length >0 %}
