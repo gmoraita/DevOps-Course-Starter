@@ -6,34 +6,39 @@
   
   <div class="row">
     <div class="col-md-12 table-responsive-md">
-      {% if 'admin' in view_model.user.roles %}
+      {% if 'admin' in view_model.logged_user.roles %}
       <p><button onclick="location.href='/useradmin'" type="button">Edit Users</button></p>
       
       {% endif %}
-      <h2>Items</h2>
-      <div class="wrapper loading">
-        <h5>To-Do</h5>
-        {{ status_table(view_model.todo_items, view_model.statuses, view_model.user.roles) }}
-        
-        <h5>Doing</h5>
-        {{ status_table(view_model.doing_items, view_model.statuses, view_model.user.roles) }}
+      {% if ('reader' in view_model.logged_user.roles) or ('writer' in view_model.logged_user.roles) or (('admin' in view_model.logged_user.roles)) %}
+      
+        <h2>Items</h2>
+        <div class="wrapper loading">
+          <h5>To-Do</h5>
+          {{ status_table(view_model.todo_items, view_model.statuses, view_model.logged_user.roles) }}
+          
+          <h5>Doing</h5>
+          {{ status_table(view_model.doing_items, view_model.statuses, view_model.logged_user.roles) }}
 
-        {% if view_model.show_all_done_items%}
-          <h5>Done</h5>
-          {{ status_table(view_model.done_items, view_model.statuses, view_model.user.roles) }}
-        {% else %}
-          <h5>Done - Recent</h5>
-          {{ status_table(view_model.recent_done_items, view_model.statuses, view_model.user.roles) }}
-          <details>
-            <summary>Show Older Completed</summary>
-            <h5>Done - Older</h5>
-            {{ status_table(view_model.older_done_items, view_model.statuses, view_model.user.roles) }}
-          </details>
+          {% if view_model.show_all_done_items%}
+            <h5>Done</h5>
+            {{ status_table(view_model.done_items, view_model.statuses, view_model.logged_user.roles) }}
+          {% else %}
+            <h5>Done - Recent</h5>
+            {{ status_table(view_model.recent_done_items, view_model.statuses, view_model.logged_user.roles) }}
+            <details>
+              <summary>Show Older Completed</summary>
+              <h5>Done - Older</h5>
+              {{ status_table(view_model.older_done_items, view_model.statuses, view_model.logged_user.roles) }}
+            </details>
 
+          {% endif %}
+        {% else %} 
+            Your role does not allow you to see any tasks
         {% endif %}
       </div>
       <br/><br/>
-      {% if 'writer' in view_model.user.roles %}
+      {% if 'writer' in view_model.logged_user.roles %}
         <h5>New Task</h5>
         <form onsubmit="submitReq('add','todoform'); return false;" id="todoform">
           <div class="form-row">
@@ -58,6 +63,9 @@
         
         </form>
       {% endif %}  
+
+      
+      
       </div>
     </div>
   </div>

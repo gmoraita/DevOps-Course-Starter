@@ -33,17 +33,18 @@
                     <td>{{user.id}}</td>
                     <td>
                         <label {% if 'reader' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Reader</label>
-                        <input type="checkbox" id="{{view_model.user.id}}_reader" {% if 'reader' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'reader' )">
+                        <input type="checkbox" id="{{user.id}}_reader" {% if 'reader' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'reader' )">
                         &nbsp;&nbsp;
                         <label {% if 'writer' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Writer</label> 
-                        <input type="checkbox" id="{{view_model.user.id}}_writer" {% if 'writer' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'writer')">
+                        <input type="checkbox" id="{{user.id}}_writer" {% if 'writer' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'writer')">
                         &nbsp;&nbsp;
                         <label 
-                            {% if 'admin' in user.roles and view_model.users|length != 1 %} style="font-weight: bold; color: green;" 
-                            {% elif view_model.users|length == 1 %} style="font-weight: bold; color: gray;"
+                            {% if view_model.logged_user.id == user.id  %} style="font-weight: bold; color: gray;"
+                            {% elif 'admin' in user.roles and not view_model.is_sole_admin and view_model.logged_user.id != user.id %} style="font-weight: bold; color: green;" 
+                            
                             {% endif %} 
                             >Admin</label> 
-                        <input type="checkbox" id="{{view_model.user.id}}_admin" {% if 'admin' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'admin')" {% if view_model.users|length == 1 %} disabled {% endif %} >
+                        <input type="checkbox" id="{{user.id}}_admin" {% if 'admin' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'admin')" {% if view_model.logged_user.id == user.id  %} disabled {% endif %} >
                         
                     </td>
                     

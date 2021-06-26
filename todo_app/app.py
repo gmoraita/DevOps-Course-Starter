@@ -82,12 +82,6 @@ def create_app():
         
         return redirect('/', code=302)
 
-    @app.route("/logout")
-    @login_required
-    def logout():
-        logout_user()
-        return redirect('/', code=302)
-
     @app.route('/useradmin', methods=['GET'])
     @login_required
     def _useradmin():
