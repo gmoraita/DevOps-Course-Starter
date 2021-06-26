@@ -23,7 +23,7 @@ CMD ["poetry", "run", "flask", "run", "--host", "0.0.0.0", "-p", "5100"]
 FROM base as production
 EXPOSE 5000
 ENV PORT=5000
-CMD poetry run gunicorn -b 0.0.0.0:$PORT 'todo_app.app:create_app()' --access-logfile gunicorn-access.log --log-file gunicorn.log
+CMD poetry run gunicorn -b 0.0.0.0:$PORT 'todo_app.app:create_app()' --access-logfile /code/gunicorn-access.log --log-file /code/gunicorn.log
 
 # Testing - Offline
 FROM base as testing-offline
