@@ -17,12 +17,14 @@ _TODO_URL = 'http://localhost:5000'
 def create_temp_tasks_collection():
     temp_tasks_collection_name = 'temptasks_%s' % datetime.now().strftime(r"%Y%m%d%H%M%S%f")
     os.environ['DATA_COLLECTION'] = temp_tasks_collection_name
+    os.environ['LOGIN_DISABLED'] = 'True'
     return temp_tasks_collection_name
 
 def delete_temp_tasks_collection(temp_tasks_collection_name):
     test_tasks = pymongo.MongoClient(Config().DB_CONNECTION_STRING).todoapp[temp_tasks_collection_name]
     test_tasks.drop()
     del os.environ['DATA_COLLECTION']
+    del os.environ['LOGIN_DISABLED']
 
 
 @pytest.fixture(scope='module')

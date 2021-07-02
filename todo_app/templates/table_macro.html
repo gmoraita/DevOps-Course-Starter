@@ -1,4 +1,4 @@
-{% macro status_table(status_items, statuses)%}
+{% macro status_table(status_items, statuses, roles)%}
     {% if status_items|length >0 %}
       
         <table class="table table-sm table-hover">
@@ -9,8 +9,10 @@
               <th>Description</th>
               <th>Due</th>
               <th style="width: 150px;">Status</th>
-              <th style="width: 150px;text-align: center;">Move To</th>
-              <th style="width: 3px;text-align: center;">Delete</th>
+              {% if 'writer' in roles %}
+                <th style="width: 150px;text-align: center;">Move To</th>
+                <th style="width: 3px;text-align: center;">Delete</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -29,20 +31,20 @@
                   {% else %}{% endif %}
                 </td>
                 <td><img src="{{status_icon}}" style="height: 26px;"/> {{item.status}}</td>
-                
-                <td style="width: 150px;text-align: center;"> 
-                  <select id="status_select_{{item.id}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
-                    <option ></option>
-                    {% for status in statuses %}
-                      {% if item.status != status %}
-                        <option value="{{status}}">{{status}}</option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                  
-                </td>
-                <td style="width: 3px;text-align: center;"><img id="delete_{{item.id}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
-                
+                {% if 'writer' in roles %}
+                  <td style="width: 150px;text-align: center;"> 
+                    <select id="status_select_{{item.id}}" style="width: 150px;" onchange="submitReq('setstatus/{{ item.id }}/'+value,null)">
+                      <option ></option>
+                      {% for status in statuses %}
+                        {% if item.status != status %}
+                          <option value="{{status}}">{{status}}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    
+                  </td>
+                  <td style="width: 3px;text-align: center;"><img id="delete_{{item.id}}" src="/static/xicon.png" onclick="submitReq('delete/{{ item.id }}',null)" style="height: 12px;"/></td>
+                {% endif %}  
                 
               </tr>
               

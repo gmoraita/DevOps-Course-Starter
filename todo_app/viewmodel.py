@@ -4,10 +4,13 @@ from .data.item import Item
 from bson.objectid import ObjectId
 
 class ViewModel:
-    def __init__(self, items, item_params=None):
+    def __init__(self, items, logged_user):
         self._items = items
-        self._item_params = item_params
-        self._statuses = Item.statuses
+        self._logged_user = logged_user
+
+    @property
+    def logged_user(self):
+        return self._logged_user
 
     @property
     def items(self):
@@ -15,11 +18,11 @@ class ViewModel:
     
     @property
     def statuses(self):
-        return self._statuses
+        return Item.statuses
 
     @property
-    def item_params(self):
-        return self._item_params
+    def item(self):
+        return Item
 
     @property
     def todo_items(self):

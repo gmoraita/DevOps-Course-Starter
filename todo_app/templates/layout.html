@@ -14,6 +14,15 @@
     </nav>
 
     <div class="container body-content">
+      <div class="jumbotron">
+        <h1 class="display-4"><img src="/static/todo_logo.png" style="height: 90px; ">&nbsp;To-Do App</h1>
+        <p class="lead">
+          George's super-duper TO-DO app (Powered by MongoDB&reg;) on Heroku.</p>
+        <p class="lead" style="text-align: right ; margin-bottom: -50px;">
+          <img src="{{view_model.logged_user.user_features.avatar_url}}" style="height: 40px;">&nbsp;{{view_model.logged_user.id}}&nbsp;
+        </p>
+     
+     </div>
       {% block content %}{% endblock %}
     </div>
 
@@ -79,7 +88,16 @@
         }
         
       }
-  
+
+      function toggle_role(checked, id, role){
+        url = 'usersetrole/'+id+'/'+role+'/';
+        if (checked == true){
+          url = url+'add';
+        } else {
+          url = url+'remove';
+        }
+        submitReq(url,null)
+      }
     </script>
   </body>
 </html>

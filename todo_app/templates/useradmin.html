@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% from 'table_macro.html' import status_table %}
+{% block title %}To-Do App{% endblock %}
+
+{% block content %}
+  
+  <div class="row">
+    
+  </div>
+  <div class="row">
+    <div class="col-md-12 table-responsive-md">
+      <p><button onclick="location.href='/'" type="button">Exit User Admin</button></p>
+      <h2>Users</h2>
+      <div class="wrapper loading">
+        {% if view_model.users|length >0 %}
+      
+            <table class="table table-sm table-hover">
+            <thead class="thead-dark"> 
+                <tr>
+                
+                <th style="width: 50px;">Avatar</th>
+                <th style="width: 150px;">User</th>
+                <th>Roles</th>
+                
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in view_model.users %}
+
+
+                <tr>
+                    <td><img src="{{user.user_features.avatar_url}}" style="height: 40px;"/></td>
+                    <td>{{user.id}}</td>
+                    <td>
+                        <label {% if 'reader' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Reader</label>
+                        <input type="checkbox" id="{{user.id}}_reader" {% if 'reader' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'reader' )">
+                        &nbsp;&nbsp;
+                        <label {% if 'writer' in user.roles %} style="font-weight: bold; color: green;" {% endif %}>Writer</label> 
+                        <input type="checkbox" id="{{user.id}}_writer" {% if 'writer' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'writer')">
+                        &nbsp;&nbsp;
+                        <label 
+                            {% if view_model.logged_user.id == user.id  %} style="font-weight: bold; color: gray;"
+                            {% elif 'admin' in user.roles and not view_model.is_sole_admin and view_model.logged_user.id != user.id %} style="font-weight: bold; color: green;" 
+                            
+                            {% endif %} 
+                            >Admin</label> 
+                        <input type="checkbox" id="{{user.id}}_admin" {% if 'admin' in user.roles %} checked {% endif %} onclick="toggle_role(this.checked,'{{user.id}}', 'admin')" {% if view_model.logged_user.id == user.id  %} disabled {% endif %} >
+                        
+                    </td>
+                    
+                    
+                </tr>
+                
+                {% endfor %}
+
+            </tbody>
+            </table>
+            <div>
+                <ul>
+                    <li><strong>Reader</strong>: Can only see tasks</li>
+                    <li><strong>Writer</strong>: Can see and add/delete/move tasks</li>
+                    <li><strong>Admin</strong>: Can only see tasks and also manage users</li>
+                </ul>
+            </div>
+            {% else %}No users to dislay
+        {% endif %}
+      </div>
+      
+    </div>
+  </div>
+  <P></P>
+{% endblock %}
