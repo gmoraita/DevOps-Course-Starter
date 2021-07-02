@@ -23,9 +23,6 @@ class UserAdminViewModel:
             if 'admin' in user.roles:
                 admins += 1
         
-        if admins > 1:
-            return False
-        else:
-            return True
+        return admins <= 1
 
     
