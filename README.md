@@ -48,13 +48,12 @@ You can run a local mongoDB for dev purposes by running:
 It will spin a local mongoDB from a cloud image. You can connect at the default 27017 port. Any records added will persist in local volume created in ```./localmongodb``` so you can find them later even if you bring the container down
 
 ## Integration with GitHub authentication using the OAuth flow
-- Register the app with Github
-* Follow the Github [documentation](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to create your oauth app.
-* For the homepage URL field enter the address for accessing the website locally.
-* For the callback add a particular path to this URL for example /login/
+* Register the app with Github
+    * Follow the Github [documentation](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) to create your oauth app.
+    * For the homepage URL field enter the address for accessing the website locally.
+    * For the callback add a particular path to this URL for example /login/
 callback.
 * You will need both a client-id (```GITHUB_CLIENT_ID```) and client-secret (```GITHUB_CLIENT_SECRET```) for your ```.env``` file. The client-secret once generated will only be shown once, so take a note of it to avoid needing to regenerate one later.
-* if using ```pip``` to manage dependencies, run ```pip install oauthlib flask-login```
 
 Note: For integration with Heroku (see firther down) create an additional oauth app and add separate ```GITHUB_CLIENT_ID``` and ```GITHUB_CLIENT_SECRET```
 
