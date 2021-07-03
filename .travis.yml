@@ -12,8 +12,6 @@ before_script:
 - docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
 - docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
-- echo $DOCKER_PWD
-- echo $DB_CONNECTION_STRING
 - docker run  -e DB_CONNECTION_STRING=$DB_CONNECTION_STRING todo-app:devops-course-starter_todoapp-test-online
       
 script: 
