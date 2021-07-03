@@ -26,7 +26,7 @@ script:
 
 - echo "Push the TODO list to Azure"
 #- docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
-- curl -dH -X POST "$AZURE_WEBHOOK_URL" 
+- curl -dH -X POST $AZURE_WEBHOOK_URL
 
 #- docker tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT registry.heroku.com/georgestodoapp/web
 #- heroku container:login
