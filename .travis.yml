@@ -12,15 +12,17 @@ before_script:
 - docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
 - docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
-- docker run  -e DB_USERNAME=$DB_USERNAME -e DB_PASSWORD=$DB_PASSWORD -e DB_CLUSTER=$DB_CLUSTER todo-app:devops-course-starter_todoapp-test-online
+- docker run  -e DB_CONNECTION_STRING=$DB_CONNECTION_STRING todo-app:devops-course-starter_todoapp-test-online
       
 script: 
 - echo "Build the TODO list"
 - docker build --target production --tag $DOCKER_USER/todo-app:$TRAVIS_COMMIT .
+- docker build --target production --tag $DOCKER_USER/todo-app:latest .
 
 - echo "Push the TODO list to Docker Hub"
 - echo $DOCKER_PWD | docker login --username $DOCKER_USER --password-stdin
 - docker push $DOCKER_USER/todo-app:$TRAVIS_COMMIT
+- docker push $DOCKER_USER/todo-app:latest
 
 - echo "Push the TODO list to Heroku"
 - docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
