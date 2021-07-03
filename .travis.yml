@@ -25,6 +25,7 @@ script:
 - docker push $DOCKER_USER/todo-app:latest
 
 - echo "Push the TODO list to Azure"
+- echo $AZURE_WEBHOOK_URL
 #- docker pull $DOCKER_USER/todo-app:$TRAVIS_COMMIT
 - curl -dH -X POST $AZURE_WEBHOOK_URL
 
