@@ -8,7 +8,7 @@ branches:
 
 
 before_script:
-- python $AZURE_WEBHOOK_URL
+- python todo_app/check.py $AZURE_WEBHOOK_URL
 - echo "Test the TODO list"
 - docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
