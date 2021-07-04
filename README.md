@@ -33,19 +33,15 @@ $ cp .env.template .env  # (first time only)
 The `.env` file is used by flask to set environment variables when running `flask run`. This enables things like development mode (which also enables features like hot reloading when you make a file change). There's also a [SECRET_KEY](https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY) variable which is used to encrypt the flask session cookie.
 
 ## Database Connectivity
-The TODO app use a MongoDB database cluster hosted on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). There is a free tier, which is suitable for the purposes of this app. If you choose the "I'm learning MongoDB" option at sign-up then the set-up instructions are very intuitive. Start the sign-up process [here](https://www.mongodb.com/try) and refer to the below for guidance:
-* Cloud & Region: Select any nearer your region
-* Security: Select username/password authentication and connection from any IP
-Note that once created, the cluster might take a bit of time to spin up
-
-Change the ```.env``` you created and add the following information:
-* DB_USERNAME: Created when you signed up to MongoDB Atalas. A list is visible in the "Database Access" menu under the "Security" heading
-* DB_PASSWORD: Created druing sign up as well. If lost you'll have to to change the password in the "Database Access" menu.
-* DB_CLUSTER: Get from the mongo URL which is visible in the "Connect" menu of your cluster. Look for a URL that ends with mongodb.net
+The TODO app use a MongoDB database
 
 You can run a local mongoDB for dev purposes by running:
 ```docker-compose up -d todoapp-local-mongodb```
 It will spin a local mongoDB from a cloud image. You can connect at the default 27017 port. Any records added will persist in local volume created in ```./localmongodb``` so you can find them later even if you bring the container down
+
+Change if needed the ```.env``` you created and add the following information (if not already there):
+* ```DB_CONNECTION_STRING=mongodb://localhost:27017```
+
 
 ## Integration with GitHub authentication using the OAuth flow
 * Register the app with Github
@@ -167,11 +163,11 @@ To see the logs of the test containers do the following:
 
 
 ## C4 
-The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Diagrams.NET) format https://www.diagrams.net/ 
+The C4 Architecture diagrams are maintained in C4-Architecture-diagram file which is in Draw IO (Diagrams.NET) format [https://www.diagrams.net/](https://www.diagrams.net/) 
 
 You can view them online through their online service or dowloading their app. They also have a VSCode plugin
 
-Note - the "Code Diagram" UML classes and packages diagrams are generated from the code using pylint's pyreverse. You will need to install GraphViz (https://graphviz.org/download/)
+Note - the "Code Diagram" UML classes and packages diagrams are generated from the code using pylint's pyreverse. You will need to install [GraphViz](https://graphviz.org/download/)
 
 Then run:
 
@@ -179,6 +175,26 @@ Then run:
 
 This will generate 2 files:
 ```classes_-p.png``` and ```packages_-p.png``` which then can be added as images to the C4 "Code diagram" tab.
+
+## Azure setup
+The app runs on the Azure Cloud. Azure hosts the production application, in a docker container, as an Azure
+App Service, and using Azure's CosmosDB, which has an API compatible with MongoDB.
+
+Ensure you have an Azure account created at the [Azure portal](https://portal.azure.com)
+
+* Setup 
+    * Step 1: Follow the instructions to [Install azure CLI](https://docs.microsoft.com/en-us/cli/azure/) on your machine if you haven't already.
+    * Step 2: Add resource group: ```az group create -l uksouth -n <resource_group_name>```
+    * Step 3: Setup the Cosmos Database with Mongo API: 
+        * Create a new CosmosDB: ```az cosmosdb create --name <cosmos_account_name> --resourcegroup <resource_group_name> --kind MongoDB```
+        * Create new MongoDB database under that account: ```az cosmosdb mongodb database create --account-name <cosmos_account_name> --name <database_name> --resourcegroup <resource_group_name>```
+    * Step 4: Connect the app to the CosmosDB: ```az cosmosdb keys list -n <cosmos_account_name> -g <resource_group_name> --type connection-strings```. This will give us a connection string. Alter the given connection string to tell pymongo to use the default database: Add ```/DefaultDatabase``` after the port number in the given connection string, eg: ```mongodb://<database_name>:<primarymasterkey>@<database_name>.mongo.cosmos.azure.com:10255/DefaultDatabase?ssl=true&<config>```. Keep this connection string as we will encrypt in the next section in Travis CI
+    * Step 5: Create a web app: 
+        * First create an App Service Plan: ```az appservice plan create --resource-group <resource_group_name> -n <appservice_plan_name> --sku Free --is-linux```
+        * Then create the Web App: ```az webapp create --resource-group <resource_group_name> --plan <appservice_plan_name> --name <webapp_name> --deployment-container-image-name <dockerhub_username>/todoapp:latest```
+    * Step 6: Setup the environment variables from your ```.env``` file: e.g ```az webapp config appsettings set -g <resource_group_name> -n <webapp_name> --settings FLASK_APP=todo_app/app```. Or you can pass in a JSON file containing all variables by using ```--settings @foo.json```, see [here](https://docs.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest#az_webapp_config_appsettings_set).
+    
+
 
 ## Continuous Integration using Travis CI
 Travis CI is set up to work well with GitHub but for it to work you need to enable it for any repository you want to use it for. Instructions are here: https://docs.travisci.com/user/tutorial/#to-get-started-with-travis-ci-using-github. 
@@ -188,13 +204,13 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-* Encrypt the username: ```travis encrypt --pro DB_USERNAME=<db username> --add```
-* Encrypt the password: ```travis encrypt --pro DB_PASSWORD=<db password> --add```
-* Encrypt the cluster (for extra security): ```travis encrypt --pro DB_CLUSTER=<mongo DB cluster> --add```
 
+* Encrypt the CosmoDB database connection string from the previous section: ```travis encrypt --pro "DB_CONNECTION_STRING=<Cosmo DB connection string>" --add```. NOTE: ensure you escape the special characters & with \\& and the $ sign with \\\$
+
+You can goto [Travis Dashboard](https://travis-ci.com/dashboard) and then select the repository to see the build progress
  
-## Continuous Deployment using Heroku
-Everytime there is a commit, there will also be an automatic deployment to Heroku server, provided CI completed successfully. Also the docker images are published to DockerHub
+## Continuous Deployment using Dockerhub and Azure
+Everytime there is a commit, there will also be an automatic deployment to Azure server, provided CI completed successfully. Also the docker images are published to DockerHub
 
 You will first need to add the Docker username and password to the travis configuration
 ```
@@ -202,23 +218,10 @@ travis encrypt --pro DOCKER_USER=<docker username> --add
 travis encrypt --pro DOCKER_PWD=<docker password> --add
 ```
 
-Then You will need to set on Heroku the env variables:
-``` 
-heroku config:set `cat .env | grep DB_USERNAME` -a <heroku_app_name>
-heroku config:set `cat .env | grep DB_PASSWORD` -a <heroku_app_name>
-heroku config:set `cat .env | grep DB_CLUSTER` -a <heroku_app_name>
-heroku config:set `cat .env | grep SECRET_KEY` -a <heroku_app_name>
-```
+We need to enable the CD in Azure and use the webhook to trigger the CD once a new image is available on HitHub
+* Enable CD: ```az webapp deployment container config --enable-cd true --resource-group <resource_group_name> --name <webapp_name>```. This will return a web hook url
+* Add this to Travis: ```travis encrypt --pro "AZURE_WEBHOOK_URL=<web hook url from previous step>" --add```. NOTE: ensure you escape the special characters & with \\& and the $ sign with \\\$
 
-NOTE: If not done yet, please encrypt the environment variable HEROKU_API_KEY using: ```travis encrypt --pro HEROKU_API_KEY=<the API Secret> --add```
 
-Login to to Heroku and add manually the ```GITHUB_CLIENT_ID``` and ```GITHUB_CLIENT_SECRET```
-
-Then make a change and commit to github
-
-You can goto https://travis-ci.com/dashboard and then select the repository to see the build progress
-
-Once complete you can open the application on your browser:
-``` heroku open -a <heroku_app_name> 
 
 
