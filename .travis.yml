@@ -1,5 +1,6 @@
 services:
 - docker
+- mongodb
 
 branches:
   only:
@@ -8,11 +9,13 @@ branches:
 
 
 before_script:
+- sleep 15
+- mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 - echo "Test the TODO list"
 - docker build --target testing-offline --tag todo-app:devops-course-starter_todoapp-test-offline .
 - docker run --env-file .env.test todo-app:devops-course-starter_todoapp-test-offline
 - docker build --target testing-online --tag todo-app:devops-course-starter_todoapp-test-online .
-- docker run  -e DB_CONNECTION_STRING=$DB_CONNECTION_STRING todo-app:devops-course-starter_todoapp-test-online
+- docker run  -e DB_CONNECTION_STRING='mongodb://127.0.0.1:27017' todo-app:devops-course-starter_todoapp-test-online
       
 script: 
 - echo "Build the TODO list"
