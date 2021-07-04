@@ -188,11 +188,12 @@ Ensure you have an Azure account created at the [Azure portal](https://portal.az
     * Step 3: Setup the Cosmos Database with Mongo API: 
         * Create a new CosmosDB: ```az cosmosdb create --name <cosmos_account_name> --resourcegroup <resource_group_name> --kind MongoDB```
         * Create new MongoDB database under that account: ```az cosmosdb mongodb database create --account-name <cosmos_account_name> --name <database_name> --resourcegroup <resource_group_name>```
-    * Step 4: Connect the app to the CosmosDB: ```az cosmosdb keys list -n <cosmos_account_name> -g <resource_group_name> --type connection-strings```. This will give us a connection string. Alter the given connection string to tell pymongo to use the default database: Add ```/DefaultDatabase``` after the port number in the given connection string, eg: ```mongodb://<database_name>:<primarymasterkey>@<database_name>.mongo.cosmos.azure.com:10255/DefaultDatabase?ssl=true&<config>```. Keep this connection string as we will encrypt in the next section in Travis CI
-    * Step 5: Create a web app: 
+    * Step 4: Connect the app to the CosmosDB: ```az cosmosdb keys list -n <cosmos_account_name> -g <resource_group_name> --type connection-strings```. This will give us a connection string. Alter the given connection string to tell pymongo to use the default database: Add ```/DefaultDatabase``` after the port number in the given connection string, eg: ```mongodb://<database_name>:<primarymasterkey>@<database_name>.mongo.cosmos.azure.com:10255/DefaultDatabase?ssl=true&<config>```. Keep this connection string as we will encrypt in Step 7
+    * Step 5: Restrict access to the database: Find the (IP address for the web app)[https://docs.microsoft.com/en-us/azure/app-service/overview-inbound-outbound-ips#find-outbound-ips], and restrict the Cosmos DB to only allowing access from that IP via by using a [firewall](https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-configure-firewall).
+    * Step 6: Create a web app: 
         * First create an App Service Plan: ```az appservice plan create --resource-group <resource_group_name> -n <appservice_plan_name> --sku Free --is-linux```
         * Then create the Web App: ```az webapp create --resource-group <resource_group_name> --plan <appservice_plan_name> --name <webapp_name> --deployment-container-image-name <dockerhub_username>/todoapp:latest```
-    * Step 6: Setup the environment variables from your ```.env``` file: e.g ```az webapp config appsettings set -g <resource_group_name> -n <webapp_name> --settings FLASK_APP=todo_app/app```. Or you can pass in a JSON file containing all variables by using ```--settings @foo.json```, see [here](https://docs.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest#az_webapp_config_appsettings_set).
+    * Step 7: Setup the environment variables from your ```.env``` file: e.g ```az webapp config appsettings set -g <resource_group_name> -n <webapp_name> --settings FLASK_APP=todo_app/app```. Or you can pass in a JSON file containing all variables by using ```--settings @foo.json```, see [here](https://docs.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest#az_webapp_config_appsettings_set). Ensure you include the ```DB_CONNECTION_STRING``` which should be the string retrived in step 5.
     
 
 
@@ -204,8 +205,6 @@ To run the e2e tests with selenium you will need the env variables. The .travis.
 * Install Ruby ```sudo apt install ruby```
 * Install Travis ```sudo gem install travis```
 * Login to Travis ```travis login --pro --github-token <gitbub token>```. The token can be obtained from here: https://github.com/settings/tokens/
-
-* Encrypt the CosmoDB database connection string from the previous section: ```travis encrypt --pro "DB_CONNECTION_STRING=<Cosmo DB connection string>" --add```. NOTE: ensure you escape the special characters & with \\& and the $ sign with \\\$
 
 You can goto [Travis Dashboard](https://travis-ci.com/dashboard) and then select the repository to see the build progress
  
