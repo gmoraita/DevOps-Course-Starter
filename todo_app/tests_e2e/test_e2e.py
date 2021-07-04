@@ -71,6 +71,7 @@ def test_task_journey(driver: Firefox, test_app):
     driver.find_element_by_id("todoform").submit()
     driver.get(_TODO_URL)
     driver.refresh()
+    driver.refresh()
     assert ('a test description' in driver.page_source)
     
     #get task id added
